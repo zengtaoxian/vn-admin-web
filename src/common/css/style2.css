@@ -1,0 +1,292 @@
+.message_con {
+  /*message_ul结束*/
+}
+.message_con .message_ul {
+  border: 1px solid #cdd0d1;
+  border-radius: 3px;
+  /* 老的 Firefox */
+  -webkit-box-shadow: 0px 5px 5px #f1f0f0;
+          box-shadow: 0px 5px 5px #f1f0f0;
+  /*message_detail的样式*/
+  /*certification的注释*/
+}
+.message_con .message_ul .message_li {
+  width: 100%;
+  border-bottom: 1px solid #c8cbcc;
+  text-align: right;
+  background: #fff;
+}
+.message_con .message_ul .message_li a {
+  display: block;
+  position: relative;
+}
+.message_con .message_ul .message_li .message_box1 {
+  float: left;
+  position: relative;
+}
+.message_con .message_ul .message_li .message_box1 img {
+  width: 1.6rem;
+  margin: 0.48rem 0.2rem;
+}
+.message_con .message_ul .message_li .message_box1 .mark_radiu {
+  position: absolute;
+  right: 0.32rem;
+  top: 0.6rem;
+  width: 0.2rem;
+  height: 0.2rem;
+  background: red;
+  border-radius: 50%;
+}
+.message_con .message_ul .message_li .message_box2 {
+  height: 1.4rem;
+  text-align: left;
+  padding: 0.68rem 1.12rem 0.48rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.message_con .message_ul .message_li .message_box2 h1 {
+  float: left;
+  font-size: 0.56rem;
+  line-height: 0.72rem;
+  font-weight: 800;
+  font-family: "微软雅黑";
+}
+.message_con .message_ul .message_li .message_box2 span {
+  float: right;
+  right: 0;
+  padding-right: 0.9rem;
+  position: absolute;
+  display: inline-block;
+  line-height: 0.56rem;
+  font-size: 0.44rem;
+  font-family: "微软雅黑";
+}
+.message_con .message_ul .message_li .message_box2 p {
+  float: left;
+  line-height: 0.8rem;
+  text-align: left;
+  left: 0;
+}
+.message_con .message_ul .last {
+  border-bottom: 0;
+}
+.message_con .message_ul .message_li_details {
+  font-size: 0.6rem;
+  font-weight: 800;
+  font-family: "微软雅黑";
+  padding: 0.36rem 0.92rem 0.36rem 0.32rem;
+  border-bottom: 1px solid #cdd0d1;
+}
+.message_con .message_ul .message_li_section {
+  font-size: 0.52rem;
+  font-family: "微软雅黑";
+  line-height: 1rem;
+  color: #374552;
+  font-weight: normal;
+  padding: 0.68rem 0.4rem 1rem 0.48rem;
+}
+.message_con .message_ul .message_li_section a {
+  color: #2fb26a;
+  display: inline-block;
+  padding: 1.48rem 0 1.2rem 0;
+}
+.message_con .message_ul .message_li_section .a_details {
+  padding-right: 0.7rem;
+}
+.message_con .message_ul .message_li_section .link {
+  text-indent: -4000px;
+}
+.message_con .message_ul .message_card_fir {
+  margin-top: 0.3rem;
+}
+.message_con .message_ul .message_li_card {
+  width: 100%;
+  text-align: center;
+  color: #232936;
+  font-size: 0.52rem;
+  padding: 0.5rem 0.4rem 0.5rem 0;
+}
+.message_con .message_ul .message_li_card .message_box1 {
+  float: left;
+  padding: 0 0.4rem;
+}
+.message_con .message_ul .message_li_card .message_box2 {
+  text-align: left;
+  overflow: hidden;
+  padding-left: 0.36rem;
+  margin-right: 0.36rem;
+  word-wrap: break-word;
+}
+.message_con .message_ul .message_li_card .message_box2 .card_img {
+  width: 7rem;
+}
+.message_con .message_ul .message_li_card .message_box2 .img_certification {
+  width: 0.6rem;
+  float: left;
+  margin-right: 0.2rem;
+}
+.message_con .message_ul .message_li_card .message_box2 .card_audit {
+  color: #fff;
+  background: #ff8921;
+  margin-left: 0.2rem;
+  padding: 0.12rem 0.22rem;
+  font-size: 0.4rem;
+}
+.message_con .message_center {
+  margin-bottom: 1.76rem;
+}
+.message_con .message_ulSec {
+  margin-top: 0.68rem;
+}
+.message_con .tab_card {
+  margin: 1.28rem 0;
+  padding: 0.4rem 0;
+  border: 1px solid #dbdedf;
+}
+.message_con .tab_card .tab_li {
+  height: 0.88rem;
+  line-height: 0.88rem;
+  width: 33%;
+  float: left;
+  border-right: 1px solid #c8cbcc;
+  text-align: center;
+}
+.message_con .tab_card .tab_li a {
+  color: #3f4856;
+  font-size: 0.52rem;
+}
+.message_con .tab_card .tab_li a:hover {
+  cursor: pointer;
+}
+.message_con .tab_card .tab_li_thir {
+  border: 0;
+}
+.message_con .about_card {
+  font-size: 0.44rem;
+  color: #3f4856;
+  text-align: center;
+  line-height: 0.96rem;
+  padding-bottom: 1.76rem;
+}
+.message_con .about_card .advisory {
+  color: #39a568;
+  font-size: 0.44rem;
+}
+.message_con .about_card .weekday {
+  font-size: 0.4rem;
+}
+.message_con .choose {
+  font-size: 0.52rem;
+  color: #232936;
+  text-align: left;
+  padding: 0.5rem 0;
+}
+.con {
+  padding: 0.54rem 0.4rem;
+}
+.footer_back {
+  height: 1.76rem;
+  background: #f8f8f8;
+  padding: 0 0.6rem;
+}
+.footer_back li {
+  float: left;
+  margin-top: 0.3rem;
+  line-height: 1.76rem;
+  width: 20%;
+  display: block;
+  text-align: center;
+}
+.footer_back li .pre_img,
+.footer_back li .next_img {
+  width: 0.4rem;
+  height: 0.72rem;
+}
+.footer_back li .home_img {
+  width: 0.8rem;
+  height: 1.1rem;
+}
+.footer_back li .book_img,
+.footer_back li .theme_img {
+  width: 1rem;
+  height: 1.1rem;
+}
+.footer_back .pre {
+  text-align: left;
+  width: 17%;
+}
+.footer_back .next {
+  width: 17%;
+}
+.footer_back .home,
+.footer_back .book {
+  width: 25%;
+}
+.footer_back .theme {
+  text-align: right;
+  width: 15%;
+}
+.btm_b {
+  background: #ffffff;
+  background: url(../images/bg.png) #ffffff center bottom no-repeat;
+  background-size: 100%;
+  position: relative;
+}
+/*message_li_choose注释*/
+.message_li_choose {
+  width: 100%;
+  text-align: center;
+  color: #232936;
+  margin-bottom: 0.8rem;
+  border: 1px solid #cdd0d1;
+  border-radius: 3px;
+  -webkit-box-shadow: 0px 5px 5px #f1f0f0;
+  box-shadow: 0px 5px 5px #f1f0f0;
+  position: relative;
+}
+.message_li_choose a {
+  display: block;
+  padding: 1.52rem 0 0;
+}
+.message_li_choose .triangle {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.message_li_choose .triangle .img_triangle {
+  width: 1.52rem;
+}
+.message_li_choose .message_box1 {
+  float: left;
+  padding: 0 1.4rem 1.52rem 1.2rem;
+  vertical-align: center;
+  text-align: center;
+}
+.message_li_choose .message_box1 .img_choose {
+  width: 2.44rem;
+}
+.message_li_choose .message_box2 {
+  text-align: left;
+  color: #232936;
+  font-size: 0.44rem;
+  word-wrap: break-word;
+  overflow: hidden;
+  padding: 0 0.56rem 0 0;
+}
+.message_li_choose .message_box2 .choose_title {
+  color: #2ea967;
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding-bottom: 0.4rem;
+  padding-top: 0.4rem;
+}
+.message_li_choose .message_box1Sec {
+  padding: 0 1.4rem 1.88rem 1.2rem;
+}
+.message_li_choose .message_box1Sec .img_chooseMan {
+  width: 3.78rem;
+}
+.message_li_choose .message_box2Sec .choose_titleSec {
+  color: #1989fa;
+}

@@ -1,0 +1,2164 @@
+<style lang="less">
+  @import "../../common/less/priceList.less";
+</style>
+
+<style lang="less" scoped>
+  .tab_warp {
+    /*border: #0eb2f6 solid 1px;*/
+  }
+</style>
+
+<template>
+  <div class="box">
+    <!--<div class="top">-->
+    <!--<div class="inp">-->
+    <!--<i-input placeholder="价格包名称/价格包编号" icon="search" style: @on-change="search" v-model="condition"></i-input>-->
+    <!--</div>-->
+    <!--<div class="export"><img src="../../assets/export.jpg" alt="" @click="exportData(1)"></div>-->
+    <!--<div id="btn" v-if="havePerm(perm.priceList.create)">-->
+    <!--<i-button type="primary" @click="showPricelAdd" class="btn">-->
+    <!--<Icon type="plus-round"></Icon>&nbsp;&nbsp;新增价格包-->
+    <!--</i-button>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <div class="main_header clear">
+      <div class="input_wrap" v-if="havePerm('257')">
+        <i-input placeholder="价格包名称/价格包编号" style: @on-enter="search" v-model.trim="condition"></i-input>
+        <span class="search_btn" @click="search"><Icon type="ios-search-strong"></Icon></span>
+      </div>
+
+      <div class="header_btn" v-if="havePerm('200')">
+        <i-button type="primary" @click="showPricelAdd('0')">
+          <Icon type="plus-round"></Icon>
+          新增成本包
+        </i-button>
+      </div>
+
+      <div class="header_btn" v-if="havePerm('201')">
+        <i-button type="primary" @click="showPricelAdd('1')">
+          <Icon type="plus-round"></Icon>
+          新增挂牌包
+        </i-button>
+      </div>
+
+      <div class="header_btn" v-if="havePerm('202')">
+        <i-button type="primary" @click="showPricelAdd('2')">
+          <Icon type="plus-round"></Icon>
+          新增销售包
+        </i-button>
+      </div>
+      <!--<div class="export_btn" @click="exportData"></div>-->
+    </div>
+
+    <div class="new_tab_wrap" ref="new_tab_wrap" :style="{height:tabHeight+'px'}">
+      <table class="new_table">
+        <tr class="tab_th">
+          <th class="text_left pad_lf" width='40'>
+          <span class="chebox_btn" :class="checkAll?'active':''">
+            <span></span>
+            <input class="check_box_btn" type="checkbox" v-model="checkAll" @click="selectAllCheckBox">
+          </span>
+          </th>
+          <th class="text_left pad_lf">价格包编号</th>
+          <th class="text_left pad_lf">价格包名称</th>
+          <th class="text_left pad_lf">价格包类型</th>
+          <th class="text_left pad_lf">商品类型</th>
+          <th class="text_left pad_lf">价格包说明</th>
+          <th class="text_left pad_lf">创建时间</th>
+          <th class="text_left pad_lf">创建人</th>
+          <th class="text_left pad_lf">最后上架时间</th>
+          <th class="text_left pad_lf">最后下架时间</th>
+          <th class="text_left pad_lf">状态</th>
+          <th class="text_left pad_lf">关联商品数(订单数)</th>
+          <th class="text_left pad_lf">操作</th>
+        </tr>
+        <tr class="tba_content" v-for="item in listData">
+          <td class="text_left pad_lf" width='40'>
+          <span class="chebox_btn" :class="item.checked?'active':''">
+            <span></span>
+            <input class="check_box_btn" v-model="item.checked" type="checkbox" @click="selectCheckBox(item)">
+          </span>
+          </td>
+          <td class="pad_lf" v-html="item.packageNo"></td>
+          <td class="pad_lf" v-html="item.packageName"></td>
+          <td class="pad_lf" v-html="item.packageTypeName"></td>
+          <td class="pad_lf" v-html="item.typeName"></td>
+          <td class="pad_lf" v-html="item.remark"></td>
+          <td class="pad_lf" v-html="item.createTime"></td>
+          <td class="pad_lf" v-html="item.createUser"></td>
+          <td class="pad_lf" v-html="item.onTime?item.onTime:'-'"></td>
+          <td class="pad_lf" v-html="item.offTime?item.offTime:'-'"></td>
+          <td class="pad_lf" v-html="item.status"></td>
+          <td class="pad_lf" v-html="item.linkCount"></td>
+          <td class="pad_lf">
+            <span class="tab_del_btn" @click="showDetail(item.id,item.packageType)" v-if="havePerm('199')">详情</span>
+            <span class="tab_del_btn" @click="editPricel(item.id)" v-if="havePerm('203')">编辑</span>
+            <!--<span class="tab_del_btn">查看历史</span>-->
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!--<Page v-if="totalCount" :total="totalCount" :page-size="pageNum" :current="pageNo" :page-size-opts="pageOpt" size="small" show-elevator show-sizer show-total placement="top" class="page" @on-change="getPageChange" @on-page-size-change="getPageSizeChange"></Page>-->
+    <div class="page_btm_div" v-if="totalCount">
+      <div class="left_btn" v-show="checkBoxArr.length>0">
+        <span class="text">已选择<em v-html="checkBoxArr.length"></em>&nbsp;条</span>
+        <span class="span_btn" @click="updatePriceOn()" v-if="havePerm('195')">上架</span>
+        <span class="span_btn" @click="updatePriceOff()" v-if="havePerm('196')">下架</span>
+      </div>
+      <Page class="page_iview_right" v-if="totalCount" :total="totalCount" :page-size="pageNum" :current="pageNo"
+            :page-size-opts="pageOpt" size="small" show-elevator show-sizer show-total placement="top"
+            @on-change="getPageChange" @on-page-size-change="getPageSizeChange"></Page>
+    </div>
+
+    <Modal class="vertical-center-modal" :mask-closable="false" v-model="modal1" title="新增价格包" @on-ok="handleSubmit('formValidate')"
+           :scrollable="scrollable"
+           @on-cancel="handleReset('formValidate')" width="860">
+
+      <Row>
+
+      </Row>
+      <row style="padding-left: 20px;">
+        <Col span="23">
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
+          <!--<div class="pricel_code">&nbsp;&nbsp;DD123456</div>-->
+
+          <FormItem class="ivu-form-item-required" label="价格包名称">
+            <Input v-model="formValidate.packageName" placeholder="2~50个字,名字不能重复"></Input>
+          </FormItem>
+          <FormItem class="ivu-form-item-required" label="价格包类型">
+            <!--<RadioGroup v-model="formValidate.packageType" type="button" size="large">-->
+            <!--<Radio label="0" :disabled="formValidate.packageType !=0 ">成本</Radio>-->
+            <!--<Radio label="1" :disabled="formValidate.packageType !=1 ">挂牌</Radio>-->
+            <!--<Radio label="2" :disabled="formValidate.packageType !=2 ">销售</Radio>-->
+            <!--</RadioGroup>-->
+            <el-radio-group v-model="formValidate.packageType" size="small">
+              <el-radio-button label="0" :disabled="formValidate.packageType !=0 ">成本</el-radio-button>
+              <el-radio-button label="1" :disabled="formValidate.packageType !=1 ">挂牌</el-radio-button>
+              <el-radio-button label="2" :disabled="formValidate.packageType !=2 ">销售</el-radio-button>
+            </el-radio-group>
+          </FormItem>
+          <FormItem class="ivu-form-item-required" label="商品类别">
+            <el-radio-group v-model="formValidate.goodType">
+              <el-radio class="pricel_check" v-for="item in goodType" :label="item.id">{{item.typeName}}</el-radio>
+            </el-radio-group>
+          </FormItem>
+          <FormItem class="ivu-form-item-required" label="计费类型">
+            <!--<RadioGroup v-model="formValidate.chargeType" type="button" size="large">-->
+            <!--<Radio label="0">流量</Radio>-->
+            <!--<Radio label="1">包月</Radio>-->
+            <!--</RadioGroup>-->
+            <el-radio-group v-model="formValidate.chargeType" size="small">
+              <el-radio-button label="0">流量</el-radio-button>
+              <el-radio-button label="1">包月</el-radio-button>
+            </el-radio-group>
+          </FormItem>
+          <FormItem class="ivu-form-item-required" label="归属运营商">
+            <!--<RadioGroup v-model="formValidate.supplyType" type="button" size="large">-->
+            <!--<Radio label="0">移动</Radio>-->
+            <!--<Radio label="1">联通</Radio>-->
+            <!--<Radio label="2">电信</Radio>-->
+            <!--</RadioGroup>-->
+            <el-radio-group v-model="formValidate.supplyType" size="small">
+              <el-radio-button label="0">移动</el-radio-button>
+              <el-radio-button label="1">联通</el-radio-button>
+              <el-radio-button label="2">电信</el-radio-button>
+            </el-radio-group>
+          </FormItem>
+          <FormItem class="ivu-form-item-required" label="线路类型">
+            <!--<RadioGroup v-model="formValidate.eType" type="button" size="large">-->
+            <!--<Radio label="0">呼入</Radio>-->
+            <!--<Radio label="1">呼出</Radio>-->
+            <!--<Radio label="2">呼出+呼入</Radio>-->
+            <!--</RadioGroup>-->
+            <el-radio-group v-model="formValidate.eType" size="small">
+              <el-radio-button label="0">呼入</el-radio-button>
+              <el-radio-button label="1">呼出</el-radio-button>
+              <el-radio-button label="2">呼出+呼入</el-radio-button>
+            </el-radio-group>
+          </FormItem>
+          <FormItem class="ivu-form-item-required" label="价格配置">
+            <div class="tab_warp">
+              <table class="new_table table_price">
+                <tr>
+                  <th class="text_left pad_lt" width="100">资费项</th>
+                  <th class="text_left pad_lt" width="210">类型选择</th>
+                  <th colspan="2" class="text_left pad_lt" width="310">价格项(元)配置金额包含6%税点</th>
+                </tr>
+                <tr class="tab_content" v-if="formValidate.chargeType == '1'">
+                  <th class="text_left pad_lt" width="60">月租(不含低消)</th>
+                  <th class="text_left pad_lt" width="210">按小时折算,单条E1月租(不含号码月租)</th>
+                  <th colspan="2" class="text_left pad_lt" width="310"><input class="tab_big_input"
+                                                                              v-model="formValidate.monthFee"
+                                                                              type="text">元/月
+                  </th>
+                </tr>
+                <tr class="tab_content" v-if="formValidate.chargeType == '1'">
+                  <th class="text_left pad_lt" width="60">低消</th>
+                  <th class="text_left pad_lt" width="210">按小时折算,单条E1低消(不含号码低消)</th>
+                  <th colspan="2" class="text_left pad_lt" width="310"><input class="tab_big_input"
+                                                                              v-model="formValidate.minFee" type="text">元/月
+                  </th>
+                </tr>
+                <tr class="tab_content" v-if="formValidate.eType == '0' || formValidate.eType == '2'">
+                  <th class="text_left pad_lt" width="60">呼入</th>
+                  <th class="text_left pad_lt" width="210">
+                    <Select v-model="formValidate.inbound" filterable transfer style="width:200px" placeholder="请选择"
+                            @on-change="selectInbound">
+                      <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                      </Option>
+                    </Select>
+                  </th>
+                  <th colspan="2" class="text_left pad_lt" width="310" v-html="formValidate.inbound"></th>
+                </tr>
+
+                <tr
+                  v-show="formValidate.feeTypeOut == '0' && ( formValidate.eType == '1' || formValidate.eType == '2') "
+                  class="tab_content">
+                  <th rowspan="2" class="text_left pad_lt" width="60">呼出</th>
+                  <th rowspan="2" class="text_left pad_lt" width="160">
+                    <!--<RadioGroup v-model="formValidate.feeTypeOut" type="button" size="small" @on-change="cnm">-->
+                    <!--<Radio label="0">分网计费</Radio>-->
+                    <!--<Radio label="1">全网计费</Radio>-->
+                    <!--</RadioGroup>-->
+                    <el-radio-group v-model="formValidate.feeTypeOut" size="mini" @change="cnm">
+                      <el-radio-button label="0">分网计费</el-radio-button>
+                      <el-radio-button label="1">全网计费</el-radio-button>
+                    </el-radio-group>
+                  </th>
+                  <th rowspan="1" class="text_left pad_lt" width="60">网内</th>
+                  <th class="text_left pad_lt" width="310">
+                    <el-radio-group v-model="formValidate.commodityType1">
+                      <div>
+                        <el-radio class="el_radio_box" label="1">长市合一</el-radio>
+                      </div>
+
+                      <div class="price_list_tab_select" v-if="formValidate.commodityType1 == '1'">
+                        <Select v-model="formValidate.inbound5" filterable transfer style="width:280px" placeholder="请选择"
+                                @on-change="selectInbound5">
+                          <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                            }}
+                          </Option>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <el-radio class="el_radio_box" label="2">长市区分</el-radio>
+                      </div>
+                      <div v-if="formValidate.commodityType1 == '2'">
+                        <div class="price_list_tab_select">
+                          本地固话
+                          <Select v-model="formValidate.inbound6" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound6">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          长途固话
+                          <Select v-model="formValidate.inbound7" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound7">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          本地手机
+                          <Select v-model="formValidate.inbound8" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound8">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          长途手机
+                          <Select v-model="formValidate.inbound9" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound9">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                      </div>
+                    </el-radio-group>
+                  </th>
+                </tr>
+
+                <tr v-show="formValidate.feeTypeOut == '0' && ( formValidate.eType == '1' || formValidate.eType == '2')"
+                    class="tab_content">
+                  <th rowspan="2" class="text_left pad_lt" width="60">网间</th>
+                  <th class="text_left pad_lt" width="310">
+
+                    <el-radio-group v-model="formValidate.commodityType2" vertical>
+                      <div>
+                        <el-radio class="el_radio_box" label="1">长市合一</el-radio>
+                      </div>
+                      <div class="price_list_tab_select" v-if="formValidate.commodityType2 == '1'">
+                        <Select v-model="formValidate.inbound10" filterable transfer style="width:280px" placeholder="请选择"
+                                @on-change="selectInbound10">
+                          <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                            }}
+                          </Option>
+                        </Select>
+                      </div>
+                      <div>
+                        <el-radio class="el_radio_box" label="2">长市区分</el-radio>
+                      </div>
+                      <div v-if="formValidate.commodityType2 == '2'">
+                        <div class="price_list_tab_select">
+                          本地固话
+                          <Select v-model="formValidate.inbound11" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound11">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          长途固话
+                          <Select v-model="formValidate.inbound12" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound12">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          本地手机
+                          <Select v-model="formValidate.inbound13" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound13">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          长途手机
+                          <Select v-model="formValidate.inbound14" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound14">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                      </div>
+                    </el-radio-group>
+
+                  </th>
+                </tr>
+
+                <tr v-show="formValidate.feeTypeOut == '1' && ( formValidate.eType == '1' || formValidate.eType == '2')"
+                    class="tab_content">
+                  <th rowspan="1" class="text_left pad_lt" width="60">呼出</th>
+                  <th rowspan="1" class="text_left pad_lt" width="210">
+                    <!--<RadioGroup v-model="formValidate.feeTypeOut" type="button" size="small" @on-change="cnm">-->
+                    <!--<Radio label="0">分网计费</Radio>-->
+                    <!--<Radio label="1">全网计费</Radio>-->
+                    <!--</RadioGroup>-->
+                    <el-radio-group v-model="formValidate.feeTypeOut" size="mini" @change="cnm">
+                      <el-radio-button label="0">分网计费</el-radio-button>
+                      <el-radio-button label="1">全网计费</el-radio-button>
+                    </el-radio-group>
+                  </th>
+                  <th colspan="2" class="text_left pad_lt" width="310">
+                    <div>
+                      本地固话
+                      <Select v-model="formValidate.inbound1" filterable transfer style="width:280px" placeholder="请选择"
+                              @on-change="selectInbound1">
+                        <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                        </Option>
+                      </Select>
+                    </div>
+                    <div>
+                      长途固话
+                      <Select v-model="formValidate.inbound2" filterable transfer style="width:280px" placeholder="请选择"
+                              @on-change="selectInbound2">
+                        <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                        </Option>
+                      </Select>
+                    </div>
+                    <div>
+                      本地手机
+                      <Select v-model="formValidate.inbound3" filterable transfer style="width:280px" placeholder="请选择"
+                              @on-change="selectInbound3">
+                        <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                        </Option>
+                      </Select>
+                    </div>
+                    <div>
+                      长途手机
+                      <Select v-model="formValidate.inbound4" filterable transfer style="width:280px" placeholder="请选择"
+                              @on-change="selectInbound4">
+                        <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                        </Option>
+                      </Select>
+                    </div>
+
+                  </th>
+                </tr>
+                <tr>
+                  <th class="text_left pad_lt" width="60">国际费率倍数</th>
+                  <th colspan="3" class="text_left pad_lt">
+                    <input class="tab_input_big" type="text" v-model="formValidate.nationalFee" placeholder="默认为1，非必填">
+                  </th>
+                </tr>
+              </table>
+            </div>
+          </FormItem>
+          <FormItem class="margin_b" label="价格包说明">
+            <textarea class="textarea_big" v-model="formValidate.remark"></textarea>
+          </FormItem>
+          <FormItem class="margin_b" label="创建人">
+            <div v-html="formValidate.createUser"></div>
+          </FormItem>
+          <FormItem class="margin_b" label="初始化状态">
+            <div>下架中</div>
+          </FormItem>
+          <!--<FormItem>-->
+          <!--<Button type="primary" @click="handleSubmit('formValidate')" style="float:right">保存</Button>-->
+          <!--<Button type="ghost" @click="handleReset('formValidate')" style="margin-right: 10px;float:right">取消</Button>-->
+          <!--</FormItem>-->
+          <div class="footer_modal">
+            <Button type="ghost" class="sub_btn_size" @click="handleReset">取消</Button>
+            <Button type="primary" class="sub_btn_size" @click="handleSubmit('formValidate')">保存</Button>
+          </div>
+        </Form>
+        </Col>
+      </row>
+      </Row>
+    </Modal>
+
+    <!-- 详情 开始 -->
+    <Modal v-model="isDatailShow" class="detail_modal" width="760">
+      <div>
+        <div slot="header">
+          <div class="detail_top borderNone clear">
+            <div class="detail_top_right pad_left">
+              <p class="title" v-html="this.priceMap.packageName"></p>
+              <p class="code" v-html="this.priceMap.packageNo"></p>
+            </div>
+            <span class="top_btn">
+          <!--<span class="btn">编辑</span>-->
+        </span>
+            <!--<span class="detail_close" @click="closeDetail">-->
+            <!--<i class="ivu-icon ivu-icon-ios-close-empty"></i>-->
+            <!--</span>-->
+          </div>
+        </div>
+        <div>
+          <!--<Tabs :value="name1" v-model="name1" @on-click="tabClick">-->
+          <Tabs class="tabs_check" :value="name1" v-model="name1" type="card" @on-click="tabClick" :animated="animated">
+            <TabPane label="基本资料" name="tab1">
+              <div class="tab_content">
+                <div class="tab_line clear">
+                  <div class="tab_line_left">价格包类型</div>
+                  <div class="tab_line_right" v-html="this.priceMap.packageTypeName"></div>
+                </div>
+                <div class="tab_line clear">
+                  <div class="tab_line_left">计费类型</div>
+                  <div class="tab_line_right" v-html="this.priceMap.chargeTypeName"></div>
+                </div>
+                <div class="tab_line clear">
+                  <div class="tab_line_left">线路类型</div>
+                  <div class="tab_line_right" v-html="this.priceMap.eTypeName"></div>
+                </div>
+                <div class="tab_line clear">
+                  <div class="tab_line_left">状态</div>
+                  <div class="tab_line_right" v-html="this.priceMap.status"></div>
+                </div>
+                <div class="tab_line clear">
+                  <div class="tab_line_left">使用数量</div>
+                  <div class="tab_line_right" v-html="this.priceMap.linkCount"></div>
+                </div>
+                <div class="tab_line clear">
+                  <div class="tab_line_left">价格包说明</div>
+                  <div class="tab_line_right" v-html="this.priceMap.remark"></div>
+                </div>
+                <div class="tab_line clear">
+                  <div class="tab_line_left">创建日期</div>
+                  <div class="tab_line_right" v-html="this.priceMap.createTime"></div>
+                </div>
+                <div class="tab_line clear">
+                  <div class="tab_line_left">创建人</div>
+                  <div class="tab_line_right" v-html="this.priceMap.createUser"></div>
+                </div>
+              </div>
+            </TabPane>
+            <TabPane label="价格配置" name="tab2">
+              <div class="">
+                <table class="new_table table_price" border="1">
+                  <tr>
+                    <th class="text_left pad_lt" width="60">资费项</th>
+                    <th class="text_left pad_lt" width="210">类型选择</th>
+                    <th colspan="2" class="text_left pad_lt" width="310">价格项(元)配置金额包含6%税点</th>
+                  </tr>
+                  <tr class="tab_content" v-if="priceMap.chargeType == '1' ">
+                    <th class="text_left pad_lt" width="60">月租(不含低消)</th>
+                    <th class="text_left pad_lt" width="210">按小时折算,单条E1月租(不含号码月租)</th>
+                    <th colspan="2" class="text_left pad_lt" width="310" v-html="priceMap.monthFee+'元/月'"></th>
+                  </tr>
+                  <tr class="tab_content" v-if="priceMap.chargeType == '1' ">
+                    <th class="text_left pad_lt" width="60">低消</th>
+                    <th class="text_left pad_lt" width="210">按小时折算,单条E1低消(不含号码低消)</th>
+                    <th colspan="2" class="text_left pad_lt" width="310" v-html="priceMap.minFee+'元/月'"></th>
+                  </tr>
+                  <tr class="tab_content" v-if="priceMap.eType == '0' || priceMap.eType == '2'">
+                    <th class="text_left pad_lt" width="60">呼入</th>
+                    <th class="text_left pad_lt" width="210">
+                      <span class="detail_disable" v-html="priceMap.callInFeeName"></span>
+                    </th>
+                    <th colspan="2" class="text_left pad_lt" width="310" v-html="priceMap.callInFeeNameDetail"></th>
+                  </tr>
+
+                  <tr v-if="(priceMap.eType == '1' || priceMap.eType == '2') && (priceMap.callOutInNetFeeType == '0' )"
+                      class="tab_content">
+                    <th rowspan="2" class="text_left pad_lt" width="60">呼出</th>
+                    <th rowspan="2" class="text_left pad_lt" width="160">
+                      分网计费
+                    </th>
+                    <th rowspan="1" class="text_left pad_lt" width="60">网内</th>
+                    <th class="text_left pad_lt" width="310">
+                      <div v-if="priceMap.callOutInNetBillType == '1'">
+                        <p>长市合一</p>
+                        <div>
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName5"></span>
+                        </div>
+                      </div>
+                      <div v-if="priceMap.callOutInNetBillType == '0'">
+                        <p>长市区分</p>
+                        <div>
+                          本地固话
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName6" :title="priceMap.callOutFeeName6"></span>
+                        </div>
+                        <div>
+                          长途固话
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName7" :title="priceMap.callOutFeeName7"></span>
+                        </div>
+                        <div>
+                          本地手机
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName8" :title="priceMap.callOutFeeName8"></span>
+                        </div>
+                        <div>
+                          长途手机
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName9" :title="priceMap.callOutFeeName9"></span>
+                        </div>
+                      </div>
+
+                    </th>
+                  </tr>
+
+                  <tr v-if="(priceMap.eType == '1' || priceMap.eType == '2') && (priceMap.callOutOutNetFeeType == '0' )"
+                      class="tab_content">
+                    <th rowspan="1" class="text_left pad_lt" width="60">网间</th>
+                    <th class="text_left pad_lt" width="310">
+                      <div v-if="priceMap.callOutOutNetBillType == '1'">
+                        <p>长市合一</p>
+                        <div>
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName10"></span>
+                        </div>
+                      </div>
+
+                      <div v-if="priceMap.callOutOutNetBillType == '0'">
+                        <p>长市区分</p>
+                        <div>
+                          本地固话
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName11" :title="priceMap.callOutFeeName11"></span>
+                        </div>
+                        <div>
+                          长途固话
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName12" :title="priceMap.callOutFeeName12"></span>
+                        </div>
+                        <div>
+                          本地手机
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName13" :title="priceMap.callOutFeeName13"></span>
+                        </div>
+                        <div>
+                          长途手机
+                          <span class="detail_disable" v-html="priceMap.callOutFeeName14" :title="priceMap.callOutFeeName14"></span>
+                        </div>
+                      </div>
+
+                    </th>
+                  </tr>
+
+                  <tr v-if="(priceMap.eType == '1' || priceMap.eType == '2') &&priceMap.callOutFeeTypeAll == '1'"
+                      class="tab_content">
+                    <th rowspan="1" class="text_left pad_lt" width="60">呼出</th>
+                    <th rowspan="1" class="text_left pad_lt" width="210">
+                      全网计费
+                    </th>
+                    <th colspan="2" class="text_left pad_lt" width="310">
+                      <div>
+                        本地固话
+                        <span class="detail_disable" v-html="priceMap.callOutFeeName1" :title="priceMap.callOutFeeName1"></span>
+                      </div>
+                      <div>
+                        长途固话
+                        <span class="detail_disable" v-html="priceMap.callOutFeeName2" :title="priceMap.callOutFeeName2"></span>
+                      </div>
+                      <div>
+                        本地手机
+                        <span class="detail_disable" v-html="priceMap.callOutFeeName3" :title="priceMap.callOutFeeName3"></span>
+                      </div>
+                      <div>
+                        长途手机
+                        <span class="detail_disable" v-html="priceMap.callOutFeeName4" :title="priceMap.callOutFeeName4"></span>
+                      </div>
+                    </th>
+                  </tr>
+
+                  <tr>
+                    <th class="text_left pad_lt" width="60">国际费率倍数</th>
+                    <th colspan="3" class="text_left pad_lt" v-html="this.priceMap.nationalFee"></th>
+                  </tr>
+                </table>
+              </div>
+            </TabPane>
+
+            <TabPane v-if="this.cu_packageType == '0' || this.cu_packageType == '1' " label="关联商品" name="tab3">
+              <div class="detail_tab_w">
+                <ul class="home_small_ul">
+
+                  <li v-if="linkGoodlistData.length>0" v-for="item in linkGoodlistData">
+                    <h2 class="name">{{item.goodNo}}<span class="phone">{{item.status}}</span></h2>
+                    <p class="desc">供应商：{{item.supplierName}}</p>
+                    <p class="desc">资源类型：{{item.typeName}}</p>
+                  </li>
+                  <li v-if="linkGoodlistData.length == 0" class="default_li">关联商品数量为空</li>
+                </ul>
+
+              </div>
+            </TabPane>
+
+            <TabPane v-if="this.cu_packageType == '2'" label="关联订单" name="tab4">
+              <div class="detail_tab_w">
+                <ul class="home_small_ul">
+                  <li v-if="linkOrderlistData.length>0" v-for="item in linkOrderlistData">
+                    <h2 class="name">{{item.orderId}}<span class="phone"
+                                                           v-html="item.status?item.status:'-'">{{item.status}}</span>
+                    </h2>
+                    <p class="desc" v-html="'需求资源：'+item.orderRequestType?item.orderRequestType:'-'"></p>
+                    <p class="desc" v-html="'执行时间：'+item.createTime?item.createTime:''"></p>
+                  </li>
+                  <li v-if="linkOrderlistData.length == 0" class="default_li">关联订单数量为空</li>
+                </ul>
+              </div>
+            </TabPane>
+          </Tabs>
+        </div>
+      </div>
+    </Modal>
+    <!-- 详情 结束 -->
+
+    <!-- 编辑开始 -->
+    <Modal class="vertical-center-modal" :mask-closable="false" v-model="modalEdit" title="编辑价格包" @on-ok="updatePrice('formValidate')"
+           :scrollable="scrollable"
+           @on-cancel="handleResetEdit" width="860">
+      <Row>
+
+      </Row>
+      <row style="padding-left: 20px;">
+        <Col span="23">
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
+
+          <FormItem class="ivu-form-item-required" label="价格配置">
+            <div class="tab_warp">
+              <table class="new_table table_price">
+                <tr>
+                  <th class="text_left pad_lt" width="100">资费项</th>
+                  <th class="text_left pad_lt" width="210">类型选择</th>
+                  <th colspan="2" class="text_left pad_lt" width="310">价格项(元)配置金额包含6%税点</th>
+                </tr>
+                <tr class="tab_content" v-if="formValidate.chargeType == '1' ">
+                  <th class="text_left pad_lt" width="60">月租(不含低消)</th>
+                  <th class="text_left pad_lt" width="210">按小时折算,单条E1月租(不含号码月租)</th>
+                  <th colspan="2" class="text_left pad_lt" width="310"><input class="tab_big_input"
+                                                                              v-model="formValidate.monthFee"
+                                                                              type="text">元/月
+                  </th>
+                </tr>
+                <tr class="tab_content" v-if="formValidate.chargeType == '1' ">
+                  <th class="text_left pad_lt" width="60">低消</th>
+                  <th class="text_left pad_lt" width="210">按小时折算,单条E1低消(不含号码低消)</th>
+                  <th colspan="2" class="text_left pad_lt" width="310"><input class="tab_big_input"
+                                                                              v-model="formValidate.minFee" type="text">元/月
+                  </th>
+                </tr>
+                <tr class="tab_content" v-if="formValidate.eType == '0' || formValidate.eType == '2'">
+                  <th class="text_left pad_lt" width="60">呼入</th>
+                  <th class="text_left pad_lt" width="210">
+                    <Select v-model="formValidate.callInFeeName" filterable transfer style="width:180px" placeholder="请选择"
+                            @on-change="selectInbound">
+
+                      <Option v-if="formValidate.isExist_callInFeeName == false " :value="formValidate.callInFeeName"
+                              :key="0">{{ formValidate.callInFeeName }}
+                      </Option>
+                      <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                      </Option>
+                    </Select>
+                  </th>
+                  <th colspan="2" class="text_left pad_lt" width="310" v-html="formValidate.callInFeeNameDetail"></th>
+                </tr>
+
+                <tr v-show="formValidate.callOutFeeType == '0' " class="tab_content">
+                  <th rowspan="2" class="text_left pad_lt" width="60">呼出</th>
+                  <th rowspan="2" class="text_left pad_lt" width="160">
+                    <!--<RadioGroup v-model="formValidate.callOutFeeType" type="button" size="small">-->
+                    <!--<Radio label="0">分网计费</Radio>-->
+                    <!--<Radio label="1">全网计费</Radio>-->
+                    <!--</RadioGroup>-->
+                    <el-radio-group v-model="formValidate.callOutFeeType" size="mini">
+                      <el-radio-button label="0">分网计费</el-radio-button>
+                      <el-radio-button label="1">全网计费</el-radio-button>
+                    </el-radio-group>
+                  </th>
+                  <th rowspan="1" class="text_left pad_lt" width="60">网内</th>
+                  <th class="text_left pad_lt" width="310">
+                    <el-radio-group v-model="formValidate.callOutInNetBillType">
+                      <div>
+                        <el-radio class="el_radio_box" label="1">长市合一</el-radio>
+                      </div>
+                      <div class="price_list_tab_select" v-if="formValidate.callOutInNetBillType == '1'">
+                        <Select v-model="formValidate.callOutFeeName5" filterable transfer style="width:280px" placeholder="请选择"
+                                @on-change="selectInbound5">
+                          <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                            }}
+                          </Option>
+                        </Select>
+                      </div>
+                      <div>
+                        <el-radio class="el_radio_box" label="0">长市区分</el-radio>
+                      </div>
+                      <div v-if="formValidate.callOutInNetBillType == '0'">
+                        <div class="price_list_tab_select">
+                          本地固话
+                          <Select v-model="formValidate.callOutFeeName6" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound6">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          长途固话
+                          <Select v-model="formValidate.callOutFeeName7" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound7">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          本地手机
+                          <Select v-model="formValidate.callOutFeeName8" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound8">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          长途手机
+                          <Select v-model="formValidate.callOutFeeName9" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound9">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                      </div>
+                    </el-radio-group>
+                  </th>
+                </tr>
+                <tr v-show="formValidate.callOutFeeType == '0'" class="tab_content">
+                  <th rowspan="1" class="text_left pad_lt" width="60">网间</th>
+                  <th class="text_left pad_lt" width="310">
+
+                    <el-radio-group v-model="formValidate.callOutOutNetBillType">
+                      <div>
+                        <el-radio class="el_radio_box" label="1">长市合一</el-radio>
+                      </div>
+                      <div class="price_list_tab_select" v-if="formValidate.callOutOutNetBillType == '1'">
+                        <Select v-model="formValidate.callOutFeeName10" filterable transfer style="width:280px" placeholder="请选择"
+                                @on-change="selectInbound10">
+                          <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                            }}
+                          </Option>
+                        </Select>
+                      </div>
+                      <div>
+                        <el-radio class="el_radio_box" label="0">长市区分</el-radio>
+                      </div>
+                      <div v-if="formValidate.callOutOutNetBillType == '0'">
+                        <div class="price_list_tab_select">
+                          <span style="font-size: 14px;">市话本地</span>
+                          <Select v-model="formValidate.callOutFeeName11" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound11">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          市话长途
+                          <Select v-model="formValidate.callOutFeeName12" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound12">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          本地手机
+                          <Select v-model="formValidate.callOutFeeName13" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound13">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                        <div class="price_list_tab_select">
+                          长途手机
+                          <Select v-model="formValidate.callOutFeeName14" filterable transfer style="width:280px" placeholder="请选择"
+                                  @on-change="selectInbound14">
+                            <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName
+                              }}
+                            </Option>
+                          </Select>
+                        </div>
+                      </div>
+                    </el-radio-group>
+
+                  </th>
+                </tr>
+
+                <tr v-show="formValidate.callOutFeeType == '1'" class="tab_content">
+                  <th rowspan="1" class="text_left pad_lt" width="60">呼出</th>
+                  <th rowspan="1" class="text_left pad_lt" width="210">
+                    <!--<RadioGroup v-model="formValidate.callOutFeeType" type="button" size="small">-->
+                    <!--<Radio label="0">分网计费</Radio>-->
+                    <!--<Radio label="1">全网计费</Radio>-->
+                    <!--</RadioGroup>-->
+                    <el-radio-group v-model="formValidate.callOutFeeType" size="mini">
+                      <el-radio-button label="0">分网计费</el-radio-button>
+                      <el-radio-button label="1">全网计费</el-radio-button>
+                    </el-radio-group>
+                  </th>
+                  <th colspan="2" class="text_left pad_lt" width="310">
+                    <div>
+                      本地固话
+                      <Select v-model="formValidate.callOutFeeName1" filterable transfer style="width:280px" placeholder="请选择"
+                              @on-change="selectInbound1">
+                        <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                        </Option>
+                      </Select>
+                    </div>
+
+                    <div>
+                      长途固话
+                      <Select v-model="formValidate.callOutFeeName2" filterable transfer style="width:280px" placeholder="请选择"
+                              @on-change="selectInbound2">
+                        <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                        </Option>
+                      </Select>
+                    </div>
+                    <div>
+                      本地手机
+                      <Select v-model="formValidate.callOutFeeName3" filterable transfer style="width:280px" placeholder="请选择"
+                              @on-change="selectInbound3">
+                        <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                        </Option>
+                      </Select>
+                    </div>
+                    <div>
+                      长途手机
+                      <Select v-model="formValidate.callOutFeeName4" filterable transfer style="width:280px" placeholder="请选择"
+                              @on-change="selectInbound4">
+                        <Option v-for="item in priceList" :value="item.cycleName" :key="item.id">{{ item.cycleName }}
+                        </Option>
+                      </Select>
+                    </div>
+
+                  </th>
+                </tr>
+                <tr>
+                  <th class="text_left pad_lt" width="60">国际费率倍数</th>
+                  <th colspan="3" class="text_left pad_lt">
+                    <input class="tab_input_big" type="text" v-model="formValidate.nationalFee">
+                  </th>
+                </tr>
+              </table>
+            </div>
+          </FormItem>
+          <FormItem class="margin_b" label="价格包说明">
+            <textarea class="textarea_big" v-model="formValidate.remark"></textarea>
+          </FormItem>
+          <!--<FormItem>-->
+          <!--<Button type="primary" @click="updatePrice('formValidate')" style="float:right">保存</Button>-->
+          <!--<Button type="ghost" @click="handleResetEdit" style="margin-right: 10px;float:right">取消</Button>-->
+          <!--</FormItem>-->
+
+          <div class="footer_modal">
+            <Button type="ghost" class="sub_btn_size" @click="handleResetEdit">取消</Button>
+            <Button type="primary" class="sub_btn_size" @click="updatePrice('formValidate')">保存</Button>
+          </div>
+        </Form>
+        </Col>
+
+      </row>
+      </Row>
+    </Modal>
+
+    <!-- 编辑结束 -->
+
+    <!--<div style="height:70px;width:100%;"></div>-->
+    <!--<div class="posi_btm clear">-->
+    <!--<div class="left_btn">-->
+    <!--<span class="text">已选择<em v-html="checkBoxArr.length"></em></span>-->
+    <!--<span class="span_btn" @click="updatePriceOn()">上架</span>-->
+    <!--<span class="span_btn" @click="updatePriceOff()">下架</span>-->
+    <!--</div>-->
+    <!--&lt;!&ndash;<Page :total="40" size="small" show-elevator show-sizer class="page"></Page>&ndash;&gt;-->
+    <!--</div>-->
+
+  </div>
+</template>
+<script>
+
+  import {mapGetters} from "vuex";
+  import {perm} from "@/utils/perm.js";
+  import * as api from "@/api/api";
+  import * as util from "@/common/js/util"
+
+  export default {
+    data() {
+      const areaCode = (rule, val, callback) => {
+        var flg = /^0\d{2,3}$/.test(val);
+        if (flg) {
+          callback();
+        } else {
+          callback(flg);
+        }
+      };
+      const numb = (rule, val, callback) => {
+        var flg = /^\+?[1-9][0-9]*$/.test(val);
+        if (flg) {
+          callback();
+        } else {
+          callback(flg);
+        }
+      };
+      return {
+        animated: false,
+        tabHeight: 500,
+        name1: '',
+        priceList: [],
+        goodType: [],
+        condition: '',
+        listData: [],
+        linkGoodlistData: [],
+        linkOrderlistData: [],
+        totalCount: 0,
+        pageNo: 1,
+        pageNum: util.pageSize,
+        pageOpt: util.pageOpt,
+        perm: perm.commodity,
+        isDatailShow: false,
+        scrollable: false,
+        modal1: false,
+        modalEdit: false,
+        checkAll: false,
+        checkBoxArr: [],
+        cu_id: '',
+        cu_packageType: '',
+        priceMap: {},
+        priceEditMap: {},
+        initFormValidate: {},
+        canOff: "0",
+        formValidate: {
+          packageName: '',
+          packageType: '0',
+          goodType: '1',
+          chargeType: '0',
+          supplyType: '0',
+          eType: '1',
+          monthFee: '0',
+          minFee: '0',
+          nationalFee: '1',
+          remark: '',
+          createUser: '',
+
+          allCycleIn: '',
+          allFeeIn: '',
+          allPartFeeIn: '',
+
+          feeTypeOut: '1',
+
+          inNet_billType: '',
+          inNet_fixLocalCycle: '',
+          inNet_fixLocalFee: '',
+          inNet_fixLocalPartFee: '',
+          inNet_fixRemoteCycle: '',
+          inNet_fixRemoteFee: '',
+          inNet_fixRemotePartFee: '',
+          inNet_mobileLocalCycle: '',
+          inNet_mobileLocalFee: '',
+          inNet_mobileLocalPartFee: '',
+          inNet_mobileRemoteCycle: '',
+          inNet_mobileRemoteFee: '',
+          inNet_mobileRemotePartFee: '',
+          inNet_allCycle: '',
+          inNet_allFee: '',
+          inNet_allPartFee: '',
+
+          billType: '',
+          fixLocalCycle: '',
+          fixLocalFee: '',
+          fixLocalPartFee: '',
+          fixRemoteCycle: '',
+          fixRemoteFee: '',
+          fixRemotePartFee: '',
+          mobileLocalCycle: '',
+          mobileLocalFee: '',
+          mobileLocalPartFee: '',
+          mobileRemoteCycle: '',
+          mobileRemoteFee: '',
+          mobileRemotePartFee: '',
+          allCycle: '',
+          allFee: '',
+          allPartFee: '',
+
+
+          inboundMoney: '',
+          inbound: '',
+          inbound1: '',
+          inbound2: '',
+          inbound3: '',
+          inbound4: '',
+          inbound5: '',
+          inbound6: '',
+          inbound7: '',
+          inbound8: '',
+          inbound9: '',
+          inbound10: '',
+          inbound11: '',
+          inbound12: '',
+          inbound13: '',
+          inbound14: '',
+          inbound15: '',
+          inbound16: '',
+
+
+          username: '',
+          name: '',
+          typeBtn: '',
+          commodityType1: "1",
+          commodityType2: "1",
+
+
+          billingType: 0,
+          belonging: 0,
+          lineType: 0,
+          model1: '',
+
+
+          callInFeeName: "",
+
+          callOutInNetFeeType: "",
+          callOutInNetBillType: "",
+
+          callOutOutNetFeeType: "",
+          callOutOutNetBillType: "",
+
+          callOutFeeTypeAll: "",
+          callOutBillTypeAll: "",
+
+          callOutFeeType: "",
+          callOutBillType: "",
+
+          callOutFeeName1: "",
+          callOutFeeName2: "",
+          callOutFeeName3: "",
+          callOutFeeName4: "",
+          callOutFeeName5: "",
+          callOutFeeName6: "",
+          callOutFeeName7: "",
+          callOutFeeName8: "",
+          callOutFeeName9: "",
+          callOutFeeName10: "",
+          callOutFeeName11: "",
+          callOutFeeName12: "",
+          callOutFeeName13: "",
+          callOutFeeName14: "",
+
+          callInNeed: "",
+          callOutNeed: "",
+
+          callOutALLNeed1: "",
+          callOutALLNeed2: "",
+          callOutALLNeed3: "",
+          callOutALLNeed4: "",
+
+          callOutInNeed1: "",
+          callOutInNeed2: "",
+          callOutInNeed3: "",
+          callOutInNeed4: "",
+          callOutInNeed5: "",
+
+          callOutOutNeed1: "",
+          callOutOutNeed2: "",
+          callOutOutNeed3: "",
+          callOutOutNeed4: "",
+          callOutOutNeed5: "",
+
+          isExist_callInFeeName: ""
+
+        },
+        inboundList: [
+          {
+            value: 'New York',
+            label: 'New York'
+          },
+          {
+            value: 'London',
+            label: 'London'
+          },
+          {
+            value: 'Sydney',
+            label: 'Sydney'
+          }
+        ],
+        ruleValidate: {
+          // username: [
+          //   {required: true, message: '该项不能为空', trigger: 'blur'},
+          //   {validator:numb, message:'请输入正确的号段', trigger: 'blur'}
+          // ],
+          // name: [
+          //   {required: true, message: '该项不能为空', trigger: 'blur'},
+          //   {validator:areaCode, message:'请输入正确的区号', trigger: 'blur'}
+          // ],
+          // typeBtn: [
+          //   { required: true, message: '该项不能为空', trigger: 'change' }
+          // ],
+
+        },
+        columns1: [
+          {
+            title: 'Name',
+            key: 'index',
+            type: 'index'
+          },
+          {
+            title: '订单编号',
+            key: 'name'
+          },
+          {
+            title: '订单名称',
+            key: 'age'
+          }
+        ],
+        data1: [
+          {
+            name: 'John Brown',
+            age: 18,
+            address: 'New York No. 1 Lake Park',
+            date: '2016-10-03'
+          },
+          {
+            name: 'Jim Green',
+            age: 24,
+            address: 'London No. 1 Lake Park',
+            date: '2016-10-01'
+          }
+        ]
+      };
+    },
+    computed: mapGetters(
+      {
+        perm_info: "main/perm_info"
+      }
+    ),
+    created() {
+      this.tabHeight = (document.documentElement.clientHeight - 160 - 40);
+      this.getPriceList();
+      this.initFormValidate = JSON.parse(JSON.stringify(this.formValidate));
+    },
+    methods: {
+      havePerm(id) {
+        return this.perm_info.indexOf(id) != -1;
+      },
+      handleSubmit(name) {
+        //先做好基本参数校验
+        var flag = this.addPriceValidateData();
+        if (!flag) {
+          return false;
+        } else {
+          api.fetchAddPrice(
+            this.formValidate
+          ).then((res) => {
+
+            if (res.data.respCode == '0') {
+              this.$Message.info("价格包添加成功");
+              this.modal1 = false;
+              this.formValidate = JSON.parse(JSON.stringify(this.initFormValidate));
+              this.getPriceList();
+            } else {
+              this.$Message.info(res.data.msg);
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        }
+      },
+      handleReset(name) {
+        this.modal1 = false;
+        this.formValidate = JSON.parse(JSON.stringify(this.initFormValidate));
+      },
+
+      handleResetEdit() {
+        this.modalEdit = false;
+        this.formValidate = JSON.parse(JSON.stringify(this.initFormValidate));
+      },
+      cancel() {
+//        this.$Message.info("点击了取消");
+      },
+      exportData(type) {
+        api.DownLoadFile({
+          url: '/vcloud/priceManage/price/priceExcel', data: {
+            condition: this.condition
+          }
+        });
+      },
+      closeDetail() {
+        this.isDatailShow = false;
+      },
+      showDetail(id, packageType) {
+        api.fetchPriceBasic({
+          id: id
+        }).then((res) => {
+
+          if (res.data.respCode == '0') {
+            //将tab赋值为第一个被选中
+            this.name1 = "tab1";
+            this.priceMap = res.data.map;
+            this.isDatailShow = true;
+            this.cu_packageType = packageType;
+            this.cu_id = id;
+
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      },
+      showPricelAdd(val) {
+        this.formValidate = JSON.parse(JSON.stringify(this.initFormValidate));
+        this.formValidate.chargeType = "0";
+        this.formValidate.supplyType = "0";
+        this.eType = "0";
+        this.formValidate.goodType = "0";
+
+        //根据传回来的数字决定显示的数据
+        if (val == "0") {
+          this.formValidate.packageType = "0";
+
+        } else if (val == "1") {
+          this.formValidate.packageType = "1";
+        } else if (val == "2") {
+          this.formValidate.packageType = "2";
+        }
+
+        this.getGoodType();
+        this.modal1 = true;
+        this.getBillingList();
+        this.formValidate.createUser = localStorage.getItem('USER');
+
+      },
+      getGoodType() {
+        //资源类型
+        api.fetchGoodType().then((res) => {
+
+          if (res.data.respCode == '0') {
+            this.goodType = res.data.list;
+            this.formValidate.goodType = this.goodType[0].id;
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      },
+      getPriceList() {
+
+        //初始查询之时还得判断角色来查询不同类型的价格包(6种组合)
+        var type = "";
+        if (this.havePerm('197') && this.havePerm('232') && this.havePerm('233')) {
+          type = "0,1,2";
+        } else if (this.havePerm('197') && this.havePerm('232')) {
+          type = "0,1";
+        } else if (this.havePerm('197') && this.havePerm('233')) {
+          type = "1,2";
+        } else if (this.havePerm('232') && this.havePerm('233')) {
+          type = "0,2";
+        } else if (this.havePerm('197') && !this.havePerm('232') && !this.havePerm('233')) {
+          type = "1";
+        } else if (!this.havePerm('197') && this.havePerm('232') && !this.havePerm('233')) {
+          type = "0";
+        } else if (!this.havePerm('197') && !this.havePerm('232') && this.havePerm('233')) {
+          type = "2";
+        } else if (!this.havePerm('197') && !this.havePerm('232') && !this.havePerm('233')) {
+          type = "-100";
+        }
+
+        api.fetchPriceList(
+          {
+            condition: this.condition,
+            source: '1',
+            pageNo: this.pageNo,
+            pageNum: this.pageNum,
+            packageType: type
+
+          }
+        ).then((res) => {
+
+          if (res.data.respCode == '0') {
+            this.listData = res.data.list;
+            this.totalCount = res.data.totalCount;
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      },
+
+      search() {
+        this.pageNo = 1;
+        this.getPriceList();
+      },
+      getBillingList() {
+        //获取列表数据
+        api.fetchBillingList({
+          // condition: this.condition,
+          // pageNo: this.pageNo,
+          // pageNum: this.pageNum,
+        }).then((res) => {
+          if (res.data.respCode == '0') {
+            this.priceList = res.data.list;
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      },
+      //呼入模式处理
+      selectInbound(val) {
+        debugger;
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.allCycleIn = this.priceList[i].cycleValue;
+              this.formValidate.allFeeIn = this.priceList[i].cycleFee;
+              this.formValidate.allPartFeeIn = '';
+              //带多一个字段回去,便是是否需要做更新
+              this.formValidate.callInNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.allCycleIn = '';
+              this.formValidate.allFeeIn = '';
+              this.formValidate.allPartFeeIn = this.priceList[i].cyclePartFee;
+              //带多一个字段回去,便是是否需要做更新
+              this.formValidate.callInNeed = "1";
+            }
+          }
+        }
+      },
+      //全网模式=========================================================
+      //本地固话
+      selectInbound1(val) {
+
+        this.formValidate.feeTypeOut = "1";
+        this.formValidate.billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.fixLocalCycle = this.priceList[i].cycleValue;
+              this.formValidate.fixLocalFee = this.priceList[i].cycleFee;
+              this.formValidate.fixLocalPartFee = '';
+              this.formValidate.callOutALLNeed1 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.fixLocalCycle = '';
+              this.formValidate.fixLocalFee = '';
+              this.formValidate.fixLocalPartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutALLNeed1 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //长途固话
+      selectInbound2(val) {
+
+        this.formValidate.feeTypeOut = "1";
+        this.formValidate.billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.fixRemoteCycle = this.priceList[i].cycleValue;
+              this.formValidate.fixRemoteFee = this.priceList[i].cycleFee;
+              this.formValidate.fixRemotePartFee = '';
+              this.formValidate.callOutALLNeed2 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.fixRemoteCycle = '';
+              this.formValidate.fixRemoteFee = '';
+              this.formValidate.fixRemotePartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutALLNeed2 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //本地手机
+      selectInbound3(val) {
+
+        this.formValidate.feeTypeOut = "1";
+        this.formValidate.billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.mobileLocalCycle = this.priceList[i].cycleValue;
+              this.formValidate.mobileLocalFee = this.priceList[i].cycleFee;
+              this.formValidate.mobileLocalPartFee = '';
+              this.formValidate.callOutALLNeed3 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.mobileLocalCycle = '';
+              this.formValidate.mobileLocalFee = '';
+              this.formValidate.mobileLocalPartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutALLNeed3 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //长途手机
+      selectInbound4(val) {
+
+        this.formValidate.feeTypeOut = "1";
+        this.formValidate.billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.mobileRemoteCycle = this.priceList[i].cycleValue;
+              this.formValidate.mobileRemoteFee = this.priceList[i].cycleFee;
+              this.formValidate.mobileRemotePartFee = '';
+              this.formValidate.callOutALLNeed4 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.mobileRemoteCycle = '';
+              this.formValidate.mobileRemoteFee = '';
+              this.formValidate.mobileRemotePartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutALLNeed4 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //分网模式============================================================================
+      //网内：长市合一
+      selectInbound5(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.inNet_billType = "1";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.inNet_allCycle = this.priceList[i].cycleValue;
+              this.formValidate.inNet_allFee = this.priceList[i].cycleFee;
+              this.formValidate.inNet_allPartFee = '';
+              this.formValidate.callOutInNeed5 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.inNet_allCycle = '';
+              this.formValidate.inNet_allFee = '';
+              this.formValidate.inNet_allPartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutInNeed5 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //网内：本地固话
+      selectInbound6(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.inNet_billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.inNet_fixLocalCycle = this.priceList[i].cycleValue;
+              this.formValidate.inNet_fixLocalFee = this.priceList[i].cycleFee;
+              this.formValidate.inNet_fixLocalPartFee = '';
+              this.formValidate.callOutInNeed1 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.inNet_fixLocalCycle = '';
+              this.formValidate.inNet_fixLocalFee = '';
+              this.formValidate.inNet_fixLocalPartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutInNeed1 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+
+      },
+      //网内：长途固话
+      selectInbound7(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.inNet_billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.inNet_fixRemoteCycle = this.priceList[i].cycleValue;
+              this.formValidate.inNet_fixRemoteFee = this.priceList[i].cycleFee;
+              this.formValidate.inNet_fixRemotePartFee = '';
+              this.formValidate.callOutInNeed2 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.inNet_fixRemoteCycle = '';
+              this.formValidate.inNet_fixRemoteFee = '';
+              this.formValidate.inNet_fixRemotePartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutInNeed2 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //网内：本地手机
+      selectInbound8(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.inNet_billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.inNet_mobileLocalCycle = this.priceList[i].cycleValue;
+              this.formValidate.inNet_mobileLocalFee = this.priceList[i].cycleFee;
+              this.formValidate.inNet_mobileLocalPartFee = '';
+              this.formValidate.callOutInNeed3 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.inNet_mobileLocalCycle = '';
+              this.formValidate.inNet_mobileLocalFee = '';
+              this.formValidate.inNet_mobileLocalPartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutInNeed3 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //网内：长途手机
+      selectInbound9(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.inNet_billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.inNet_mobileRemoteCycle = this.priceList[i].cycleValue;
+              this.formValidate.inNet_mobileRemoteFee = this.priceList[i].cycleFee;
+              this.formValidate.inNet_mobileRemotePartFee = '';
+              this.formValidate.callOutInNeed4 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.inNet_mobileRemoteCycle = '';
+              this.formValidate.inNet_mobileRemoteFee = '';
+              this.formValidate.inNet_mobileRemotePartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutInNeed4 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //网间：固话手机长市合一
+      selectInbound10(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.billType = "1";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.allCycle = this.priceList[i].cycleValue;
+              this.formValidate.allFee = this.priceList[i].cycleFee;
+              this.formValidate.allPartFee = '';
+              this.formValidate.callOutOutNeed5 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.allCycle = '';
+              this.formValidate.allFee = '';
+              this.formValidate.allPartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutOutNeed5 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //网间：本地固话
+      selectInbound11(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.fixLocalCycle = this.priceList[i].cycleValue;
+              this.formValidate.fixLocalFee = this.priceList[i].cycleFee;
+              this.formValidate.fixLocalPartFee = '';
+              this.formValidate.callOutOutNeed1 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.fixLocalCycle = '';
+              this.formValidate.fixLocalFee = '';
+              this.formValidate.fixLocalPartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutOutNeed1 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //网间：长途固话
+      selectInbound12(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.fixRemoteCycle = this.priceList[i].cycleValue;
+              this.formValidate.fixRemoteFee = this.priceList[i].cycleFee;
+              this.formValidate.fixRemotePartFee = '';
+              this.formValidate.callOutOutNeed2 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.fixRemoteCycle = '';
+              this.formValidate.fixRemoteFee = '';
+              this.formValidate.fixRemotePartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutOutNeed2 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //网间：本地手机
+      selectInbound13(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.mobileLocalCycle = this.priceList[i].cycleValue;
+              this.formValidate.mobileLocalFee = this.priceList[i].cycleFee;
+              this.formValidate.mobileLocalPartFee = '';
+              this.formValidate.callOutOutNeed3 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.mobileLocalCycle = '';
+              this.formValidate.mobileLocalFee = '';
+              this.formValidate.mobileLocalPartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutOutNeed3 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+      //网间：长途手机
+      selectInbound14(val) {
+
+        this.formValidate.feeTypeOut = "0";
+        this.formValidate.billType = "0";
+
+        for (let i = 0; i < this.priceList.length; i++) {
+          if (this.priceList[i].cycleName == val) {
+            if (this.priceList[i].cycleType == '0') {
+              this.formValidate.mobileRemoteCycle = this.priceList[i].cycleValue;
+              this.formValidate.mobileRemoteFee = this.priceList[i].cycleFee;
+              this.formValidate.mobileRemotePartFee = '';
+              this.formValidate.callOutOutNeed4 = "1";
+              this.formValidate.callOutNeed = "1";
+            } else if (this.priceList[i].cycleType == '1') {
+              this.formValidate.mobileRemoteCycle = '';
+              this.formValidate.mobileRemoteFee = '';
+              this.formValidate.mobileRemotePartFee = this.priceList[i].cyclePartFee;
+              this.formValidate.callOutOutNeed4 = "1";
+              this.formValidate.callOutNeed = "1";
+            }
+          }
+        }
+      },
+
+      selectAllCheckBox() {
+        //全选
+        if (this.checkAll) {
+          this.checkAll = false;
+          this.checkBoxArr = [];
+          for (let i = 0; i < this.listData.length; i++) {
+            this.listData[i].checked = false;
+          }
+        } else {
+          this.checkAll = true;
+
+          for (let i = 0; i < this.listData.length; i++) {
+            this.listData[i].checked = true;
+            this.checkBoxArr.push(this.listData[i].id);
+          }
+        }
+      },
+
+      selectCheckBox(item) {
+        if (item.checked) {
+          item.checked = false;
+          var index = this.checkBoxArr.indexOf(item.id);
+          if (index != -1) {
+            this.checkBoxArr.splice(index, 1);
+          }
+          this.checkAll = false;
+        } else {
+          item.checked = true;
+          this.checkBoxArr.push(item.id);
+          for (let i = 0; i < this.listData.length; i++) {
+            if (!this.listData[i].checked) {
+              this.checkAll = false;
+              break;
+            } else {
+              this.checkAll = true;
+            }
+          }
+
+        }
+      },
+
+      updatePriceOn() {
+        if (!this.checkBoxArr.length) {
+          this.$Message.info("请先选择");
+          return
+        }
+        var id = this.checkBoxArr.join(',');
+        api.fetchPriceUpdateStatusOn({
+          id: id
+        }).then((res) => {
+          if (res.data.respCode == '0') {
+            this.checkAll = false;
+            this.$Message.success(res.data.msg);
+            this.checkBoxArr = [];
+            this.getPriceList();
+          } else {
+            this.$Message.info(res.data.msg);
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      },
+      updatePriceOff(id) {
+        if (!this.checkBoxArr.length) {
+          this.$Message.info("请先选择");
+          return
+        }
+
+        for (let i = 0; i < this.listData.length; i++) {
+          if (this.listData[i].checked && this.listData[i].linkCount > 0) {
+            this.canOff = "1";//代表不可下架
+            break
+          }
+        }
+
+        if (this.canOff == "1") {
+          this.canOff = "0";
+          this.$Message.info("选中的价格包包含在使用中的,不可下架");
+          return
+        }
+
+
+        var id = this.checkBoxArr.join(',');
+        api.fetchPriceUpdateStatusOff({
+          id: id
+        }).then((res) => {
+          this.checkAll = false;
+          if (res.data.respCode == '0') {
+            this.$Message.success(res.data.msg);
+            this.checkBoxArr = [];
+            this.getPriceList();
+          } else {
+            this.$Message.info(res.data.msg);
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+      },
+      tabClick() {
+        if (this.name1 == "tab1") {
+          api.fetchPriceBasic({
+            id: this.cu_id
+          }).then((res) => {
+            if (res.data.respCode == '0') {
+              this.priceMap = res.data.map;
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        } else if (this.name1 == "tab2") {
+          api.fetchPriceDetail({
+            id: this.cu_id
+          }).then((res) => {
+            if (res.data.respCode == '0') {
+              this.priceMap = res.data.map;
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        } else if (this.name1 == "tab3") {
+          api.fetchPriceLinkGood({
+            id: this.cu_id
+          }).then((res) => {
+            if (res.data.respCode == '0') {
+              this.linkGoodlistData = res.data.list;
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        } else if (this.name1 == "tab4") {
+          api.fetchPriceLinkOrder({
+            id: this.cu_id
+          }).then((res) => {
+            if (res.data.respCode == '0') {
+              this.linkOrderlistData = res.data.list;
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        }
+      },
+
+
+      editPricel(id) {
+        //this.formValidate = JSON.parse(JSON.stringify(this.initFormValidate));
+        api.fetchBillingList({
+
+        }).then((res) => {
+          if (res.data.respCode == '0') {
+            this.priceList = res.data.list;
+
+            api.fetchPriceDetail({
+              id: id
+            }).then((res) => {
+              if (res.data.respCode == '0') {
+                this.formValidate = res.data.map;
+                this.priceList = this.priceList.concat(res.data.map.notExistList);
+
+                this.modalEdit = true;
+              }
+            }).catch((err) => {
+              console.log(err)
+            })
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+
+
+
+
+      },
+
+      updatePrice(name) {
+        //先做好基本参数校验
+        var flag = this.updatePriceValidateData();
+        if (!flag) {
+          return false;
+        } else {
+          api.fetchUpdatePrice(
+            this.formValidate
+          ).then((res) => {
+            if (res.data.respCode == '0') {
+              this.$Message.info("价格包更新成功");
+              this.modalEdit = false;
+              this.formValidate = JSON.parse(JSON.stringify(this.initFormValidate));
+              this.getPriceList();
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        }
+      },
+      // 价格包添加正则判断
+      addPriceValidateData() {
+        var reg = new RegExp("^\\d+(\\.\\d+)?$"); //非负浮点数（正浮点数 + 0）
+
+        if (this.formValidate.packageName == "") {
+          this.$Message.info("价格包名称不为空");
+          return false;
+        }
+
+        if (this.formValidate.packageName.length < 2 || this.formValidate.packageName.length > 50) {
+          this.$Message.info("价格包名称长度为2-50");
+          return false;
+        }
+
+        if (this.formValidate.nationalFee == "") {
+          this.$Message.info("国际费率倍数不为空");
+          return false;
+        }
+        if (!reg.test(this.formValidate.nationalFee)) {
+          this.$Message.info("国际费率倍数数值有误");
+          return false;
+        }
+
+        if (this.formValidate.chargeType == "1") {
+          if (this.formValidate.monthFee == "") {
+            this.$Message.info("月租不为空");
+            return false;
+          }
+          if (!reg.test(this.formValidate.monthFee)) {
+            this.$Message.info("月租数值有误");
+            return false;
+          }
+          if (this.formValidate.minFee == "") {
+            this.$Message.info("低消不为空");
+            return false;
+          }
+          if (!reg.test(this.formValidate.minFee)) {
+            this.$Message.info("低消数值有误");
+            return false;
+          }
+        }
+
+        if (this.formValidate.eType == "0" || this.formValidate.eType == "2") {//呼入
+          if (this.formValidate.inbound == "") {
+            this.$Message.info("呼入计费项不为空");
+            return false;
+          }
+        }
+
+        if (this.formValidate.eType == "1" || this.formValidate.eType == "2") {//呼出
+          if (this.formValidate.feeTypeOut == '0') {//分网
+            //网内
+            if (this.formValidate.commodityType1 == "1") {//长市和一
+              if (this.formValidate.inbound5 == "") {
+                this.$Message.info("网内长市合一计费项不为空");
+                return false;
+              }
+            } else if (this.formValidate.commodityType1 == "2") {//长市区分
+              if (this.formValidate.inbound6 == "") {
+                this.$Message.info("网内本地固话计费项不为空");
+                return false;
+              }
+              if (this.formValidate.inbound7 == "") {
+                this.$Message.info("网内长途固话计费项不为空");
+                return false;
+              }
+              if (this.formValidate.inbound8 == "") {
+                this.$Message.info("网内本地手机计费项不为空");
+                return false;
+              }
+              if (this.formValidate.inbound9 == "") {
+                this.$Message.info("网内长途手机计费项不为空");
+                return false;
+              }
+            }
+            //网间
+            if (this.formValidate.commodityType2 == "1") {//长市和一
+              if (this.formValidate.inbound10 == "") {
+                this.$Message.info("网间长市合一计费项不为空");
+                return false;
+              }
+            } else if (this.formValidate.commodityType2 == "2") {//长市区分
+              if (this.formValidate.inbound11 == "") {
+                this.$Message.info("网间本地固话计费项不为空");
+                return false;
+              }
+              if (this.formValidate.inbound12 == "") {
+                this.$Message.info("网间长途固话计费项不为空");
+                return false;
+              }
+              if (this.formValidate.inbound13 == "") {
+                this.$Message.info("网间本地手机计费项不为空");
+                return false;
+              }
+              if (this.formValidate.inbound14 == "") {
+                this.$Message.info("网间长途手机计费项不为空");
+                return false;
+              }
+            }
+          } else if (this.formValidate.feeTypeOut == "1") {//全网
+            if (this.formValidate.inbound1 == "") {
+              this.$Message.info("全网本地固话计费项不为空");
+              return false;
+            }
+            if (this.formValidate.inbound2 == "") {
+              this.$Message.info("全网长途固话计费项不为空");
+              return false;
+            }
+            if (this.formValidate.inbound3 == "") {
+              this.$Message.info("全网本地手机计费项不为空");
+              return false;
+            }
+            if (this.formValidate.inbound4 == "") {
+              this.$Message.info("全网长途手机计费项不为空");
+              return false;
+            }
+          }
+        }
+        return true;
+      },
+
+      // 价格包编辑正则判断
+      updatePriceValidateData() {
+
+        var reg = new RegExp("^\\d+(\\.\\d+)?$"); //非负浮点数（正浮点数 + 0）
+
+        if (this.formValidate.nationalFee.length == 0) {
+          this.$Message.info("国际费率倍数不为空");
+          return false;
+        }
+        if (!reg.test(this.formValidate.nationalFee)) {
+          this.$Message.info("国际费率倍数数值有误");
+          return false;
+        }
+
+        if (this.formValidate.chargeType == "1") {
+          if (this.formValidate.monthFee.length == 0) {
+            this.$Message.info("月租不为空");
+            return false;
+          }
+          if (!reg.test(this.formValidate.monthFee)) {
+            this.$Message.info("月租数值有误");
+            return false;
+          }
+          if (this.formValidate.minFee.length == 0) {
+            this.$Message.info("低消不为空");
+            return false;
+          }
+          if (!reg.test(this.formValidate.minFee)) {
+            this.$Message.info("低消数值有误");
+            return false;
+          }
+        }
+
+        if (this.formValidate.eType == "0" || this.formValidate.eType == "2") {//呼入
+          if (this.formValidate.callInFeeName == "") {
+            this.$Message.info("呼入计费项不为空");
+            return false;
+          }
+        }
+
+        if (this.formValidate.eType == "1" || this.formValidate.eType == "2") {//呼出
+          if (this.formValidate.callOutFeeType == "0") {//分网
+            //网内
+            if (this.formValidate.callOutInNetBillType == "1") {//长市和一
+              if (this.formValidate.callOutFeeName5 == "" || this.formValidate.callOutFeeName5 === undefined) {
+                this.$Message.info("网内长市合一计费项不为空");
+                return false;
+              }
+            } else if (this.formValidate.callOutInNetBillType == "0") {//长市区分
+              if (this.formValidate.callOutFeeName6 == "" || this.formValidate.callOutFeeName6 === undefined) {
+                this.$Message.info("网内本地固话计费项不为空");
+                return false;
+              }
+              if (this.formValidate.callOutFeeName7 == "" || this.formValidate.callOutFeeName7 === undefined) {
+                this.$Message.info("网内长途固话计费项不为空");
+                return false;
+              }
+              if (this.formValidate.callOutFeeName8 == "" || this.formValidate.callOutFeeName8 === undefined) {
+                this.$Message.info("网内本地手机计费项不为空");
+                return false;
+              }
+              if (this.formValidate.callOutFeeName9 == "" || this.formValidate.callOutFeeName9 === undefined) {
+                this.$Message.info("网内长途手机计费项不为空");
+                return false;
+              }
+            } else {
+              this.$Message.info("网内计费项不为空");
+              return false;
+            }
+            //网间
+            if (this.formValidate.callOutOutNetBillType == "1") {//长市和一
+              if (this.formValidate.callOutFeeName10 == "" || this.formValidate.callOutFeeName10 === undefined) {
+                this.$Message.info("网间长市合一计费项不为空");
+                return false;
+              }
+            } else if (this.formValidate.callOutOutNetBillType == "0") {//长市区分
+              if (this.formValidate.callOutFeeName11 == "" || this.formValidate.callOutFeeName11 === undefined) {
+                this.$Message.info("网间本地固话计费项不为空");
+                return false;
+              }
+              if (this.formValidate.callOutFeeName12 == "" || this.formValidate.callOutFeeName12 === undefined) {
+                this.$Message.info("网间长途固话计费项不为空");
+                return false;
+              }
+              if (this.formValidate.callOutFeeName13 == "" || this.formValidate.callOutFeeName13 === undefined) {
+                this.$Message.info("网间本地手机计费项不为空");
+                return false;
+              }
+              if (this.formValidate.callOutFeeName14 == "" || this.formValidate.callOutFeeName14 === undefined) {
+                this.$Message.info("网间长途手机计费项不为空");
+                return false;
+              }
+            } else {
+              this.$Message.info("网间计费项不为空");
+              return false;
+            }
+          } else if (this.formValidate.callOutFeeType == "1") {//全网
+            if (this.formValidate.callOutFeeName1 == "" || this.formValidate.callOutFeeName1 === undefined) {
+              this.$Message.info("全网本地固话计费项不为空");
+              return false;
+            }
+            if (this.formValidate.callOutFeeName2 == "" || this.formValidate.callOutFeeName2 === undefined) {
+              this.$Message.info("全网长途固话计费项不为空");
+              return false;
+            }
+            if (this.formValidate.callOutFeeName3 == "" || this.formValidate.callOutFeeName3 === undefined) {
+              this.$Message.info("全网本地手机计费项不为空");
+              return false;
+            }
+            if (this.formValidate.callOutFeeName4 == "" || this.formValidate.callOutFeeName4 === undefined) {
+              this.$Message.info("全网长途手机计费项不为空");
+              return false;
+            }
+          }
+        }
+        return true;
+      },
+
+      getPageChange(index) {
+        this.pageNo = index;
+        this.getPriceList();
+        this.checkAll = false;
+        this.checkBoxArr = [];
+      },
+
+      getPageSizeChange(pageNum) {
+        this.pageNum = pageNum
+        this.getPriceList();
+        this.checkAll = false;
+        this.checkBoxArr = [];
+
+      },
+
+      cnm() {
+      }
+    }
+  }
+</script>
