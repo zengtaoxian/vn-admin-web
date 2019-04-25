@@ -87,7 +87,6 @@
 <script>
 
 import {mapGetters} from "vuex";
-import {perm} from "@/utils/perm.js";
 
 import * as util from "@/common/js/util";
 import {

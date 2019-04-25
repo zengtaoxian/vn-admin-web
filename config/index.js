@@ -31,22 +31,11 @@ module.exports = {
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         proxyTable: {
-            // '/api': {
-            //   target: 'http://172.16.4.215:8080/',
-            //   changeOrigin: true,
-            //   pathRewrite: {
-            //     '^/api': '/'
-            //   }
-            // },
-            '/vcloud': {
+            '/vnaw': {
                 target: 'http://172.16.10.134:9197',
-              // target: 'http://106.15.102.31:18086',
-                // target: 'http://172.16.3.157:9197',
-                // target: 'http://172.16.4.47:8086',
-                // target: 'http://172.16.1.242:9197',
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/vcloud': '/vcloud'
+                    '^/vnaw': '/vnaw'
                 }
             }
         },

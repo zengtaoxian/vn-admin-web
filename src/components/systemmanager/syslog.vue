@@ -40,7 +40,7 @@
 
   import {mapGetters} from "vuex";
   import {perm} from "@/utils/perm.js";
-  import dateFilter from '../settlement/dateFilter';
+  import dateFilter from '../Filter/dateFilter';
   import defaultTip from './defaultTip.vue'
   import {
     fetch_syslog_page_info,

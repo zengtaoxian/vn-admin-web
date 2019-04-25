@@ -1,11 +1,6 @@
 import axios from './axios';
 import stores from '../store';
 
-// let Authorization = '';
-// if(localStorage.getItem('TOKEN')){
-//   Authorization = JSON.parse(localStorage.getItem('TOKEN')).token;
-// }
-
 //登录
 export function signin(data) {
   return axios.post('/vcloud/loginManage/login/login', data);
