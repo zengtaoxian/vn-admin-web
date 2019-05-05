@@ -1,52 +1,88 @@
-# ucpaas-app
+# vue-admin-template
 
-> ucpaas.com
+> A minimal vue admin template with Element UI & axios & iconfont & permission control & lint
+
+**Live demo:** http://panjiachen.github.io/vue-admin-template
+
+[中文文档](https://github.com/PanJiaChen/vue-admin-template/blob/master/README-zh.md)
 
 ## Build Setup
 
-``` bash
-# install dependencies
+```bash
+# Clone project
+git clone https://github.com/PanJiaChen/vue-admin-template.git
+
+# Install dependencies
 npm install
 
-# serve with hot reload at localhost:8080
+# Serve with hot reload at localhost:9528
 npm run dev
 
-# build for production with minification
+# Build for production with minification
 npm run build
 
-# build for production and view the bundle analyzer report
+# Build for production and view the bundle analyzer report
 npm run build --report
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## Demo
 
-新装插件
-es语法转意
-babel-runtime:"^6.0.0"
+![demo](https://github.com/PanJiaChen/PanJiaChen.github.io/blob/master/images/demo.gif)
 
-300毫秒的处理
-fastclick:^1.0.6
+## Extra
 
-es6语法转义
-babel-polyfill "^6.2.0"
+If you want router permission && generate menu by user roles , you can use this branch [permission-control](https://github.com/PanJiaChen/vue-admin-template/tree/permission-control)
 
-nginx一些配置文件
+This project is based on `webpack4` development. If you want to use `webpack3` development, please use this branch [webpack3](https://github.com/PanJiaChen/vue-admin-template/tree/webpack3)
 
+For `typescript` version, you can use [vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template) (Credits: [@Armour](https://github.com/Armour))
 
-upstream mobile {
-	    server 172.16.4.241:8080;
+## Related Project
+
+[vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
+
+[electron-vue-admin](https://github.com/PanJiaChen/electron-vue-admin)
+
+[vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template)
+
+### Element-Ui using cdn tutorial
+
+First find `index.html`([root directory](https://github.com/PanJiaChen/vue-admin-template/blob/element-ui-cdn/index.html))
+
+Import css and js of `Element`, and then import vue. Because `Element` is vue-dependent, vue must be import before it.
+
+Then find [webpack.base.conf.js](https://github.com/PanJiaChen/vue-admin-template/blob/element-ui-cdn/build/webpack.base.conf.js)
+Add `externals` to make webpack not package vue and element.
+
+```
+externals: {
+  vue: 'Vue',
+  'element-ui':'ELEMENT'
 }
+```
 
-server {
-      listen       8002;
-      server_name       localhost;
+Finally there is a small detail to pay attention to that if you import vue in global, you don't need to manually `Vue.use(Vuex)`, it will be automatically mounted, see
+[issue](https://github.com/vuejs/vuex/issues/731)
 
-      location / {
-          root   E:\dist;
-          index  index.html index.htm;
-      }
-  location ~ ^/mobile/ {
-    proxy_pass http://mobile;
-    proxy_redirect off;
-      }
-}
+And you can use `npm run build --report` to see the effect
+
+Pictured:
+![demo](https://panjiachen.github.io/images/element-cdn.png)
+
+**[Detailed code](https://github.com/PanJiaChen/vue-admin-template/commit/746aff560932704ae821f82f10b8b2a9681d5177)**
+
+**[Branch](https://github.com/PanJiaChen/vue-admin-template/tree/element-ui-cdn)**
+
+## Browsers support
+
+Modern browsers and Internet Explorer 10+.
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
+| --------- | --------- | --------- | --------- |
+| IE10, IE11, Edge| last 2 versions| last 2 versions| last 2 versions
+
+## License
+
+[MIT](https://github.com/PanJiaChen/vue-admin-template/blob/master/LICENSE) license.
+
+Copyright (c) 2017-present PanJiaChen

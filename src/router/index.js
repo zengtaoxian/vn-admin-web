@@ -1,158 +1,199 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import stores from '../store'
-import Main from 'components/Main'
-import Login from 'components/login/login'
+import store from '../store'
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css' // progress bar style
+import { Message } from 'element-ui'
+
+// in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
+// detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
 
 Vue.use(Router)
 
-const routes = [
-  {
-    path: '/login',
-    icon: 'ios-paper',
-    title: 'Login',
-    name: 'login',
-    meta: {
-      title: '登录',
-    },
-    component: Login
-  },
+/* Layout */
+import Layout from '../views/layout/Layout'
+
+/**
+* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
+*                                if not set alwaysShow, only more than one route under the children
+*                                it will becomes nested mode, otherwise not show the root menu
+* redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
+* name:'router-name'             the name is used by <keep-alive> (must set!!!)
+* meta : {
+    title: 'title'               the name show in subMenu and breadcrumb (recommend set)
+    icon: 'svg-name'             the icon show in the sidebar
+    breadcrumb: false            if false, the item will hidden in breadcrumb(default is true)
+  }
+**/
+export const constantRouterMap = [
+  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
+  { path: '/404', component: () => import('@/views/404'), hidden: true },
+
   {
     path: '/',
-    icon: 'ios-paper',
-    name: 'home',
-    component: Main,
-    redirect: '/index',
-    meta: {
-      title: '首页',
-      requiresAuth: true
-    },
-    children: [
-
-    ]
+    component: Layout,
+    redirect: '/dashboard',
+    name: 'Dashboard',
+    hidden: true,
+    children: [{
+      path: 'dashboard',
+      component: () => import('@/views/dashboard/index')
+    }]
   },
+
   {
-    path: '/system',
-    icon: 'system_icon',
-    name: 'system',
-    component: Main,
-    meta: {
-      title: '系统管理',
-      requiresAuth: true
-    },
+    path: '/example',
+    component: Layout,
+    redirect: '/example/table',
+    name: 'Example',
+    meta: { title: 'Example', icon: 'example' },
     children: [
       {
-        path: 'user',
-        icon: 'user_icon',
-        name: 'user',
-        meta: {
-          title: '用户管理',
-          requiresAuth: true
-        },
-        component: resolve => {
-          require(['@/components/systemmanager/user.vue'], resolve);
-        }
+        path: 'table',
+        name: 'Table',
+        component: () => import('@/views/table/index'),
+        meta: { title: 'Table', icon: 'table' }
       },
       {
-        path: 'role',
-        icon: 'role_icon',
-        name: 'role',
-        meta: {
-          title: '角色管理',
-          requiresAuth: true
-        },
-        component: resolve => {
-          require(['@/components/systemmanager/role.vue'], resolve);
-        }
-      },
-      {
-        path: 'log',
-        icon: 'log_icon',
-        name: 'log',
-        title: '系统日志',
-        meta: {
-          title: '系统日志',
-          requiresAuth: true
-        },
-        component: resolve => {
-          require(['@/components/systemmanager/syslog.vue'], resolve);
-        }
-      },
-      {
-        path: 'number',
-        icon: 'number_icon',
-        name: 'number',
-        title: '号段管理',
-        meta: {
-          title: '号段管理',
-          requiresAuth: true
-        },
-        component: resolve => {
-          require(['@/components/systemmanager/number.vue'], resolve);
-        }
+        path: 'tree',
+        name: 'Tree',
+        component: () => import('@/views/tree/index'),
+        meta: { title: 'Tree', icon: 'tree' }
       }
     ]
   },
+
   {
-    path: '/resources',
-    icon: 'resources_icon',
-    name: 'resources',
-    component: Main,
-    meta: {
-      title: '资源管理',
-      requiresAuth: true
-    },
+    path: '/form',
+    component: Layout,
     children: [
       {
-        path: 'number',
-        icon: 'number_icon',
-        name: 'number',
-        title: '号段管理',
-        meta: {
-          title: '号段管理',
-          requiresAuth: true
-        },
-        component: resolve => {
-          require(['@/components/systemmanager/number.vue'], resolve);
-        }
-      },
+        path: 'index',
+        name: 'Form',
+        component: () => import('@/views/form/index'),
+        meta: { title: 'Form', icon: 'form' }
+      }
     ]
   },
 
-  {path: '*', redirect: '/index'}
+  {
+    path: '/nested',
+    component: Layout,
+    redirect: '/nested/menu1',
+    name: 'Nested',
+    meta: {
+      title: 'Nested',
+      icon: 'nested'
+    },
+    children: [
+      {
+        path: 'menu1',
+        component: () => import('@/views/nested/menu1/index'), // Parent router-view
+        name: 'Menu1',
+        meta: { title: 'Menu1' },
+        children: [
+          {
+            path: 'menu1-1',
+            component: () => import('@/views/nested/menu1/menu1-1'),
+            name: 'Menu1-1',
+            meta: { title: 'Menu1-1' }
+          },
+          {
+            path: 'menu1-2',
+            component: () => import('@/views/nested/menu1/menu1-2'),
+            name: 'Menu1-2',
+            meta: { title: 'Menu1-2' },
+            children: [
+              {
+                path: 'menu1-2-1',
+                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
+                name: 'Menu1-2-1',
+                meta: { title: 'Menu1-2-1' }
+              },
+              {
+                path: 'menu1-2-2',
+                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
+                name: 'Menu1-2-2',
+                meta: { title: 'Menu1-2-2' }
+              }
+            ]
+          },
+          {
+            path: 'menu1-3',
+            component: () => import('@/views/nested/menu1/menu1-3'),
+            name: 'Menu1-3',
+            meta: { title: 'Menu1-3' }
+          }
+        ]
+      },
+      {
+        path: 'menu2',
+        component: () => import('@/views/nested/menu2/index'),
+        meta: { title: 'menu2' }
+      }
+    ]
+  },
+
+  {
+    path: 'external-link',
+    component: Layout,
+    children: [
+      {
+        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+        meta: { title: 'External Link', icon: 'link' }
+      }
+    ]
+  },
+
+  { path: '*', redirect: '/404', hidden: true }
 ]
 
-
 if (localStorage.getItem('TOKEN')) {
-  stores.dispatch('login/load', localStorage.getItem('TOKEN'));
+  store.dispatch('login/load', localStorage.getItem('TOKEN'))
 }
 
 const router = new Router({
-  // mode: 'history',
-  routes,
-  scrollBehavior() {
-    return {x: 0, y: 0}
-  }
-});
+  // mode: 'history', //后端支持可开
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap
+})
 
+NProgress.configure({ showSpinner: false })// NProgress configuration
 
+const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(r => r.meta.requiresAuth)) {
-    // console.log(stores.state.perm.token)
-    if (stores.state.login.token) {
-      next();
+  NProgress.start()
+  if (store.state.login.token) {
+    if (to.path === '/login') {
+      next({ path: '/' })
+      NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
-      next({
-        path: '/login',
-        query: {redirect: to.fullPath}
-      })
+      if (store.getters.roles.length === 0) {
+        store.dispatch('login/GetInfo').then(res => { // 拉取用户信息
+          next()
+        }).catch((err) => {
+          store.dispatch('login/FedLogOut').then(() => {
+            Message.error(err || 'Verification failed, please login again')
+            next({ path: '/' })
+          })
+        })
+      } else {
+        next()
+      }
     }
   } else {
-    next();
+    if (whiteList.indexOf(to.path) !== -1) {
+      next()
+    } else {
+      next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
+      NProgress.done()
+    }
   }
-  stores.dispatch('main/header_title', to.meta.title);
-  document.title = to.meta.title;
+})
 
+router.afterEach(() => {
+  NProgress.done() // 结束Progress
 })
 
 export default router

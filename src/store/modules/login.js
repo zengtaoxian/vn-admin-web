@@ -1,71 +1,101 @@
-import {
-  signin,
-  signout
-} from '@/api/api';
-import * as types from "@/store/types";
+import { login, logout, getInfo } from '@/api/login'
+import Cookies from 'js-cookie'
 
-//consts
-const LOGIN_INFO = 'LOGIN_INFO';
-const LOGIN_NAME = 'LOGIN_NAME';
+// consts
+const LOGIN_TOKEN = 'LOGIN_TOKEN'
+const LOGIN_NAME = 'LOGIN_NAME'
+const LOGIN_AVATAR = 'LOGIN_AVATAR'
+const LOGIN_ROLES = 'LOGIN_ROLES'
 
-//states
+// states
 const state = {
-  token : '',
-  roleId : '',
-  userName: ''
-};
+  token: Cookies.get(LOGIN_TOKEN),
+  name: '',
+  avatar: '',
+  roles: []
+}
 
-//getters
+// getters
 const getters = {
   token: state => state.token,
-  roleId: state => state.roleId,
-  userName: state => state.userName
-};
+  name: state => state.name,
+  avatar: state => state.avatar,
+  roles: state => state.roles
+}
 
-//actions
-const actions = {
-  login: ({commit}, data) => new Promise((reslove, reject) => {
-    commit(LOGIN_NAME, data.email);
-    signin(data).then(response => {
-      if (response.data.respCode == '0') {
-        let login_str = JSON.stringify(response.data.map);
-        commit(LOGIN_INFO, login_str);
-        window.localStorage.setItem('TOKEN', login_str);
-      }
-      reslove(response);
-    }).catch(err => {
-      reject(err);
-    });
-  }),
-
-  logout: ({commit}) => new Promise((resolve, reject) => {
-    signout().then(response => {
-      commit(LOGIN_INFO, "{}");
-      window.localStorage.setItem('TOKEN', "{}");
-      resolve(response);
-    }).catch(err => {
-      reject(err);
-    });
-  }),
-
-  load: ({commit}, data) => {
-    commit(LOGIN_INFO, data);
-    commit(LOGIN_NAME, window.localStorage.getItem('USER'));
-  }
-};
-
-//mutations
 const mutations = {
-  [LOGIN_INFO](state, login_str) {
-    let login_obj = JSON.parse(login_str);
-    state.token = login_obj.token;
-    state.roleId = login_obj.roleId;
+  LOGIN_TOKEN: (state, token) => {
+    state.token = token
+  },
+  LOGIN_NAME: (state, name) => {
+    state.name = name
+  },
+  LOGIN_AVATAR: (state, avatar) => {
+    state.avatar = avatar
+  },
+  LOGIN_ROLES: (state, roles) => {
+    state.roles = roles
+  }
+}
+
+const actions = {
+  // 登录
+  Login({ commit }, userInfo) {
+    return new Promise((resolve, reject) => {
+      login(userInfo).then(response => {
+        const data = response.data
+        Cookies.set(LOGIN_TOKEN, data.token)
+        commit(LOGIN_TOKEN, data.token)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
   },
 
-  [LOGIN_NAME](state, data) {
-    state.userName = data;
+  // 获取用户信息
+  GetInfo({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getInfo({ token: state.token }).then(response => {
+        const data = response.data
+        if (data.roles && data.roles.length > 0) {
+          // 验证返回的roles是否是一个非空数组
+          commit(LOGIN_ROLES, data.roles)
+        } else {
+          reject('getInfo: roles must be a non-null array!')
+        }
+        commit(LOGIN_NAME, data.name)
+        commit(LOGIN_AVATAR, data.avatar)
+        resolve(response)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // 登出
+  LogOut({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      logout(state.token).then(() => {
+        commit(LOGIN_TOKEN, '')
+        commit(LOGIN_ROLES, [])
+        Cookies.remove(LOGIN_TOKEN)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // 前端登出
+  FedLogOut({ commit }) {
+    return new Promise(resolve => {
+      commit(LOGIN_TOKEN, '')
+      Cookies.remove(LOGIN_TOKEN)
+      resolve()
+    })
   }
-};
+}
 
 export default {
   namespaced: true,
@@ -73,4 +103,4 @@ export default {
   getters,
   actions,
   mutations
-};
+}
