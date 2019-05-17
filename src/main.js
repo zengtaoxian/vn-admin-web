@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
+import iView from 'iview'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/en' // lang i18n
@@ -24,6 +25,7 @@ import '@/icons' // icon
  */
 import '../mock' // simulation data
 
+Vue.use(iView)
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false

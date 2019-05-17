@@ -11,7 +11,7 @@ import { Message } from 'element-ui'
 Vue.use(Router)
 
 /* Layout */
-import Layout from '../views/layout/Layout'
+import Layout from '../views/base/layout/Layout'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -169,7 +169,7 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
-      if (store.getters.roles.length === 0) {
+      if (store.state.login.roles.length === 0) {
         store.dispatch('login/GetInfo').then(res => { // 拉取用户信息
           next()
         }).catch((err) => {

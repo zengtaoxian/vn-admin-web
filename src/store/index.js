@@ -1,17 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import app from './modules/app'
+import sidebar from './modules/sidebar'
 import login from './modules/login'
-import getters from './getters'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: {
-    app,
+    sidebar,
     login
-  },
-  getters
+  }
 })
 
 export default store

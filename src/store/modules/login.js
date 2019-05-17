@@ -23,6 +23,7 @@ const getters = {
   roles: state => state.roles
 }
 
+// mutations
 const mutations = {
   LOGIN_TOKEN: (state, token) => {
     state.token = token
@@ -38,6 +39,7 @@ const mutations = {
   }
 }
 
+// actions
 const actions = {
   // 登录
   Login({ commit }, userInfo) {
