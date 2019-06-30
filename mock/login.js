@@ -14,13 +14,13 @@ const users = {
     roles: ['admin'],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
+    name: 'Super1'
   },
   'editor-token': {
     roles: ['editor'],
     introduction: 'I am an editor',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor'
+    name: 'Normal2'
   }
 }
 
@@ -31,7 +31,7 @@ export default {
 
     if (data) {
       return {
-        code: 20000,
+        code: 0,
         data
       }
     }
@@ -46,7 +46,7 @@ export default {
 
     if (info) {
       return {
-        code: 20000,
+        code: 0,
         data: info
       }
     }
@@ -57,7 +57,7 @@ export default {
   },
   logout: () => {
     return {
-      code: 20000,
+      code: 0,
       data: 'success'
     }
   }

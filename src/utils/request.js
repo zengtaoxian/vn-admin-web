@@ -12,7 +12,8 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     if (store.state.login.token) {
-      config.headers['X-Token'] = store.state.login.token // 让每个请求携带自定义token 请根据实际情况自行修改
+      //让每个请求携带自定义token 请根据实际情况自行修改
+      config.headers['X-Token'] = store.state.login.token
     }
     return config
   },
@@ -27,10 +28,10 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     /**
-     * code为非20000是抛错 可结合自己业务进行修改
+     * code为非0是抛错 可结合自己业务进行修改
      */
     const res = response.data
-    if (res.code !== 20000) {
+    if (res.code !== 0) {
       Message({
         message: res.message,
         type: 'error',
@@ -49,7 +50,8 @@ service.interceptors.response.use(
           }
         ).then(() => {
           store.dispatch('login/FedLogOut').then(() => {
-            location.reload() // 为了重新实例化vue-router对象 避免bug
+            //为了重新实例化vue-router对象 避免bug
+            location.reload()
           })
         })
       }
@@ -59,7 +61,8 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    //for debug
+    console.log('err' + error)
     Message({
       message: error.message,
       type: 'error',

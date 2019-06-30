@@ -1,21 +1,19 @@
 <template>
-  <div class="box">
-    <div class="main_header clear">
-      <div class="header_btn">
-        <i-button type="primary" @click="create">
-          <Icon type="plus-round"></Icon>添加
-        </i-button>
-      </div>
-      <div class="input_wrap">
-        <i-input placeholder="ID/名称/邮箱/手机号" style: @on-enter="searchInputChange" v-model.trim="searchInput"></i-input>
-        <span class="search_btn" @click="searchInputChange"><Icon type="ios-search-strong"></Icon></span>
-      </div>
-    </div>
+  <div class="app-container">
+    <el-row>
+      <el-col :offset="1" :span="2">
+        <el-button type="primary" icon="el-icon-plus" @click="create">添加
+        </el-button>
+      </el-col>
+      <el-col :offset="13" :span="6">
+        <el-input placeholder="ID/名称/邮箱/手机号" @on-enter="searchInputChange" v-model.trim="searchInput">
+          <el-button slot="append" icon="el-icon-search" @click="searchInputChange"></el-button>
+        </el-input>
+      </el-col>
+    </el-row>
 
-    <div class="tab_wrap">
-      <Table :columns="tableHead" :data="dataList" :height="tabHeight" :loading="loading">
-      </Table>
-    </div>
+    <Table :columns="tableHead" :data="dataList" :height="tabHeight" :loading="loading">
+    </Table>
 
     <Modal
       v-model="modalDisplay" :title="modalTitle"
@@ -27,7 +25,7 @@
       <Form ref="roleForm" :model="dataInfo" :rules="formRules">
         <Row>
           <Col span="20" offset="1">
-            <div class="data_title">客户信息</div>
+            <div>客户信息</div>
           </Col>
         </Row>
 
@@ -45,12 +43,12 @@
 
         <Row>
           <Col span="3" offset="3">
-            <FormItem class="ivu-form-item-required" label="名称">
+            <FormItem label="名称">
             </FormItem>
           </Col>
           <Col span="16" v-if="modalTitle === '新增客户'">
             <FormItem prop="name">
-              <div style="position: relative;">
+              <div>
                 <Input v-model="dataInfo.name" placeholder="2-10字以内"></Input>
               </div>
             </FormItem>
@@ -64,7 +62,7 @@
 
         <Row>
           <Col span="3" offset="3">
-            <FormItem class="ivu-form-item-required" label="邮箱">
+            <FormItem label="邮箱">
             </FormItem>
           </Col>
           <Col span="16">
@@ -78,7 +76,7 @@
 
         <Row>
           <Col span="3" offset="3">
-            <FormItem class="ivu-form-item-required" label="手机号">
+            <FormItem label="手机号">
             </FormItem>
           </Col>
           <Col span="16">
@@ -89,11 +87,10 @@
             </FormItem>
           </Col>
         </Row>
-      </Form>
 
-      <Row>
+        <Row>
         <Col span="3" offset="3">
-          <FormItem class="ivu-form-item-required" label="余额">
+          <FormItem label="余额">
           </FormItem>
         </Col>
         <Col span="16">
@@ -105,9 +102,9 @@
         </Col>
       </Row>
 
-      <Row>
+        <Row>
         <Col span="3" offset="3">
-          <FormItem class="ivu-form-item-required" label="透支额度">
+          <FormItem label="透支额度">
           </FormItem>
         </Col>
         <Col span="16">
@@ -119,9 +116,9 @@
         </Col>
       </Row>
 
-      <Row>
+        <Row>
         <Col span="3" offset="3">
-          <FormItem class="ivu-form-item-required" label="开户人">
+          <FormItem label="开户人">
           </FormItem>
         </Col>
         <Col span="16">
@@ -133,9 +130,9 @@
         </Col>
       </Row>
 
-      <Row>
+        <Row>
         <Col span="3" offset="3">
-          <FormItem class="ivu-form-item-required" label="创建时间">
+          <FormItem label="创建时间">
           </FormItem>
         </Col>
         <Col span="16">
@@ -145,9 +142,9 @@
         </Col>
       </Row>
 
-      <Row>
+        <Row>
         <Col span="3" offset="3">
-          <FormItem class="ivu-form-item-required" label="更新时间">
+          <FormItem label="更新时间">
           </FormItem>
         </Col>
         <Col span="16">
@@ -160,21 +157,20 @@
 
       <Row>
         <Col span="20" offset="3">
-          <div class="footer_modal">
-            <Button type="ghost" class="sub_btn_size" @click="formReset('roleForm')">取消</Button>
-            <Button type="primary" class="sub_btn_size" @click="formSubmit('roleForm')">保存</Button>
-          </div>
+            <Button type="ghost" @click="formReset('roleForm')">取消</Button>
+            <Button type="primary" @click="formSubmit('roleForm')">保存</Button>
         </Col>
       </Row>
     </Modal>
 
-    <div class="page_btm_div" v-if="pageTotal">
-      <Page class="page_iview_right" :total="pageTotal" :current="pageNo" :page-size="pageNumOpts[pageNumSelect]"
+    <div v-if="pageTotal">
+      <Page :total="pageTotal" :current="pageNo" :page-size="pageNumOpts[pageNumSelect]"
             size="small"
             :page-size-opts="pageNumOpts"
             show-elevator show-sizer show-total placement="top"
             @on-page-size-change="pageSizeChage"
-            @on-change="pageChange"></Page>
+            @on-change="pageChange">
+      </Page>
     </div>
   </div>
 </template>
@@ -202,10 +198,6 @@
             render: (h, params) => {
               return h('div', params.index + 1);
             }
-          },
-          {
-            title: 'ID',
-            key: 'id'
           },
           {
             title: '名称',
@@ -248,9 +240,9 @@
                 h('span', {
                   props: {
                     type: 'text',
-                    class: "tab_childer_btn"
+                    class: ""
                   },
-                  class: "tab_childer_btn",
+                  class: "",
                   on: {
                     click: () => {
                       this.modify(params.row);
@@ -267,7 +259,7 @@
                     placement: "top-end",
                     transfer: true,
                   },
-                  class: 'tab_childer_btn',
+                  class: '',
                   on: {
                     "on-ok": () => {
                       this.delete(params.row);
@@ -294,6 +286,7 @@
     }),
     methods: {
       searchInputChange(event) {
+        this.$message.error("searchInputChange");
         let data = {
           pageNo: this.pageNo,
           pageNum: this.pageNumOpts[this.pageNumSelect],
@@ -317,8 +310,8 @@
         };
         this.$store.dispatch('client/getList', data);
       },
-
       create() {
+        this.$message.error("create");
         this.$store.dispatch('client/resetInfo').then(() => {
           this.modalTitle = "新增客户";
           this.modalDisplay = true;
@@ -335,20 +328,20 @@
           if (valid) {
             if (this.modalTitle === '修改客户') {
               this.$store.dispatch('client/mdfInfo').then((response) => {
-                if (response.data.respCode === '0') {
+                if (response.data.code === 0) {
                   this.$store.dispatch('client/getList', data);
                   this.modalDisplay = false;
-                }else if (response.data.respCode == '1') {
-                  this.$Message.error(response.data.msg);
+                }else if (response.data.code === 1) {
+                  this.$Message.error(response.data.desc);
                 }
               });
             } else {
                 this.$store.dispatch('client/addInfo').then((response) => {
-                  if (response.data.respCode === '0') {
+                  if (response.data.code === 0) {
                     this.$store.dispatch('client/getList', data);
                     this.modalDisplay = false;
-                  }else if (response.data.respCode == '1') {
-                    this.$Message.error(response.data.msg);
+                  }else if (response.data.code === 1) {
+                    this.$Message.error(response.data.desc);
                   }
                 });
             }
@@ -370,15 +363,15 @@
       delete(row) {
         this.$store.dispatch('client/getInfo').then((response) => {
           this.$store.dispatch('client/delInfo').then((response) => {
-            if (response.data.respCode === '0') {
-              this.$Message.success(response.data.msg);
+            if (response.data.code === 0) {
+              this.$Message.success(response.data.desc);
               let data = {
                 pageNo: this.pageNo,
                 pageNum: this.pageNumOpts[this.pageNumSelect],
               };
               this.$store.dispatch('client/getList', data);
-            }else if(response.data.respCode === '1'){
-              this.$Message.error(response.data.msg);
+            }else if(response.data.code === 1){
+              this.$Message.error(response.data.desc);
             }
           });
         });
@@ -397,18 +390,4 @@
 </script>
 
 <style lang="less">
-  .data_title {
-    color: #939da4;
-  }
-
-  .ivu-table-wrapper {
-    border: none !important;
-  }
-
-  .ivu-modal-footer {
-    display: none;
-  }
-  .ivu-tree ul li{
-    margin: 0 !important;
-  }
 </style>

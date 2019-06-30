@@ -49,10 +49,7 @@ const actions = {
   }),
 
   //删除信息
-  delInfo: ({commit}) => new Promise((reslove, reject) => {
-    let data = {
-      id: state.dataInfo.id,
-    };
+  delInfo: ({commit}, data) => new Promise((reslove, reject) => {
     delInfo(data).then(response => {
       reslove(response);
     }).catch(err => {
@@ -75,13 +72,13 @@ const actions = {
       id: state.dataInfo.id,
     };
     getInfo(data).then(response => {
-      if (response.data.respCode === '0') {
-        let dataInfo = response.data.map;
-        if (response_role_perm.data.respCode === '0') {
-          commit(DATA_INFO, JSON.parse(JSON.stringify(dataInfo)));
-          resolve(dataInfo);
+      if (response.code === 0) {
+        let data = response.data;
+        if (response.code === 0) {
+          commit(DATA_INFO, JSON.parse(JSON.stringify(data)));
+          resolve(data);
         } else {
-          reject(dataInfo);
+          reject(data);
         }
       } else {
         reject(response);
@@ -92,15 +89,15 @@ const actions = {
   }),
 
   //获取列表
-  getList: ({commit}) => new Promise((reslove, reject) => {
+  getList: ({commit}, data) => new Promise((reslove, reject) => {
     getList(data).then(response => {
-      if (response.data.respCode === '0') {
+      if (response.code === 0) {
         let idx = state.pageNumOpts.indexOf(data.pageNum);
         if (-1 !== idx) {
           commit(PAGE_NO, data.pageNo);
           commit(PAGE_NUM_SELECT, idx);
-          commit(DATA_LIST, response.data.list);
-          commit(PAGE_TOTAL, response.data.total);
+          commit(DATA_LIST, response.data);
+          commit(PAGE_TOTAL, response.total);
         }
       }
       reslove(response);
