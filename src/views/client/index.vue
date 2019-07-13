@@ -2,166 +2,68 @@
   <div class="app-container">
     <el-row>
       <el-col :offset="1" :span="2">
-        <el-button type="primary" icon="el-icon-plus" @click="create">添加
+        <el-button size="small" type="primary" icon="el-icon-plus" @click="createItem">添加
         </el-button>
       </el-col>
       <el-col :offset="13" :span="6">
-        <el-input placeholder="ID/名称/邮箱/手机号" @on-enter="searchInputChange" v-model.trim="searchInput">
+        <el-input size="small" placeholder="ID/名称/邮箱/手机号" @on-enter="searchInputChange" v-model.trim="searchInput">
           <el-button slot="append" icon="el-icon-search" @click="searchInputChange"></el-button>
         </el-input>
       </el-col>
     </el-row>
 
-    <Table :columns="tableHead" :data="dataList" :height="tabHeight" :loading="loading">
-    </Table>
+    <el-table :data="dataList" :v-loading="loading">
+      <el-table-column
+        type="index"
+        label="序号"
+        :index="headIndex">
+      </el-table-column>
 
-    <Modal
-      v-model="modalDisplay" :title="modalTitle"
-      scrollable
-      width="800px"
-      loading="loading"
-      :mask-closable="false"
-      class="">
-      <Form ref="roleForm" :model="dataInfo" :rules="formRules">
-        <Row>
-          <Col span="20" offset="1">
-            <div>客户信息</div>
-          </Col>
-        </Row>
+      <el-table-column
+        v-for="col in tableHead"
+        :prop="col.prop" :label="col.label" :key="col.prop">
+      </el-table-column>
 
-        <Row>
-          <Col span="3" offset="3">
-            <FormItem class="ivu-form-item-required" label="ID">
-            </FormItem>
-          </Col>
-          <Col span="16">
-            <FormItem>
-              {{dataInfo.id}}
-            </FormItem>
-          </Col>
-        </Row>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-row>
+            <el-col :span="12">
+              <i
+                class="el-icon-edit"
+                @click="modifyItem(scope.row)">
+                修改
+              </i>
+            </el-col>
+            <el-col :span="12">
+              <i
+                class="el-icon-delete"
+                @click="deleteItem(scope.row)">
+                删除
+              </i>
+            </el-col>
+          </el-row>
+        </template>
+      </el-table-column>
+    </el-table>
 
-        <Row>
-          <Col span="3" offset="3">
-            <FormItem label="名称">
-            </FormItem>
-          </Col>
-          <Col span="16" v-if="modalTitle === '新增客户'">
-            <FormItem prop="name">
-              <div>
-                <Input v-model="dataInfo.name" placeholder="2-10字以内"></Input>
-              </div>
-            </FormItem>
-          </Col>
-          <Col span="16" v-if="modalTitle === '修改客户'">
-            <FormItem>
-              {{dataInfo.name}}
-            </FormItem>
-          </Col>
-        </Row>
+    <el-dialog :visible.sync="itemDisplay" :title="itemTitle" v-loading="loading" width="35%">
+      <el-form ref="itemForm" :model="dataInfo" :rules="formRules" label-width="15%">
+        <el-form-item label="名称">
+          <el-input v-model="dataInfo.name"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="dataInfo.email"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号">
+          <el-input v-model="dataInfo.mobile"></el-input>
+        </el-form-item>
+      </el-form>
 
-        <Row>
-          <Col span="3" offset="3">
-            <FormItem label="邮箱">
-            </FormItem>
-          </Col>
-          <Col span="16">
-            <FormItem prop="email">
-              <Input v-model="dataInfo.email"
-                     type="textarea">
-              </Input>
-            </FormItem>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col span="3" offset="3">
-            <FormItem label="手机号">
-            </FormItem>
-          </Col>
-          <Col span="16">
-            <FormItem prop="mobile">
-              <Input v-model="dataInfo.mobile"
-                     type="textarea">
-              </Input>
-            </FormItem>
-          </Col>
-        </Row>
-
-        <Row>
-        <Col span="3" offset="3">
-          <FormItem label="余额">
-          </FormItem>
-        </Col>
-        <Col span="16">
-          <FormItem prop="balance">
-            <Input v-model="dataInfo.balance"
-                   type="textarea">
-            </Input>
-          </FormItem>
-        </Col>
-      </Row>
-
-        <Row>
-        <Col span="3" offset="3">
-          <FormItem label="透支额度">
-          </FormItem>
-        </Col>
-        <Col span="16">
-          <FormItem prop="overdraft">
-            <Input v-model="dataInfo.overdraft"
-                   type="textarea">
-            </Input>
-          </FormItem>
-        </Col>
-      </Row>
-
-        <Row>
-        <Col span="3" offset="3">
-          <FormItem label="开户人">
-          </FormItem>
-        </Col>
-        <Col span="16">
-          <FormItem prop="createUser">
-            <Input v-model="dataInfo.createUser"
-                   type="textarea">
-            </Input>
-          </FormItem>
-        </Col>
-      </Row>
-
-        <Row>
-        <Col span="3" offset="3">
-          <FormItem label="创建时间">
-          </FormItem>
-        </Col>
-        <Col span="16">
-          <FormItem>
-            {{dataInfo.createTime}}
-          </FormItem>
-        </Col>
-      </Row>
-
-        <Row>
-        <Col span="3" offset="3">
-          <FormItem label="更新时间">
-          </FormItem>
-        </Col>
-        <Col span="16">
-          <FormItem>
-            {{dataInfo.updateTime}}
-          </FormItem>
-        </Col>
-      </Row>
-      </Form>
-
-      <Row>
-        <Col span="20" offset="3">
-            <Button type="ghost" @click="formReset('roleForm')">取消</Button>
-            <Button type="primary" @click="formSubmit('roleForm')">保存</Button>
-        </Col>
-      </Row>
-    </Modal>
+      <span slot="footer" class="dialog-footer">
+          <el-button size="small" @click="formReset('itemForm')">取 消</el-button>
+          <el-button size="small" type="primary" @click="formSubmit('itemForm')">确 定</el-button>
+        </span>
+    </el-dialog>
 
     <div v-if="pageTotal">
       <Page :total="pageTotal" :current="pageNo" :page-size="pageNumOpts[pageNumSelect]"
@@ -175,15 +77,14 @@
   </div>
 </template>
 <script>
-  import {mapGetters} from "vuex";
+  import {mapGetters} from "vuex"
 
   export default {
     data() {
       return {
-        tabHeight: 500,
         loading: false,
-        modalDisplay: false,
-        modalTitle: "新增客户",
+        itemDisplay: false,
+        itemTitle: "新增客户",
         searchInput: "",
         formRules: {
           name: [
@@ -192,89 +93,39 @@
         },
         tableHead: [
           {
-            title: '序号',
-            key: 'no',
-            width: 80,
-            render: (h, params) => {
-              return h('div', params.index + 1);
-            }
+            label: '名称',
+            prop: 'name'
           },
           {
-            title: '名称',
-            key: 'name'
+            label: '邮箱',
+            prop: 'email'
           },
           {
-            title: '邮箱',
-            key: 'email'
+            label: '手机号',
+            prop: 'mobile'
           },
           {
-            title: '手机号',
-            key: 'mobile'
+            label: '余额',
+            prop: 'balance'
           },
           {
-            title: '余额',
-            key: 'balance'
+            label: '透支额度',
+            prop: 'overdraft'
           },
           {
-            title: '透支额度',
-            key: 'overdraft'
+            label: '开户人',
+            prop: 'createUser'
           },
           {
-            title: '开户人',
-            key: 'createUser'
+            label: '创建时间',
+            prop: 'createTime'
           },
           {
-            title: '创建时间',
-            key: 'createTime'
+            label: '更新时间',
+            prop: 'updateTime'
           },
-          {
-            title: '更新时间',
-            key: 'updateTime'
-          },
-          {
-            title: '操作',
-            key: 'action',
-            render: (h, params) => {
-              let arr = [];
-              arr.push(
-                h('span', {
-                  props: {
-                    type: 'text',
-                    class: ""
-                  },
-                  class: "",
-                  on: {
-                    click: () => {
-                      this.modify(params.row);
-                    }
-                  }
-                }, '修改')
-              );
-
-              arr.push(
-                h('Poptip', {
-                  props: {
-                    title: "确定要删除所选客户吗?",
-                    confirm: true,
-                    placement: "top-end",
-                    transfer: true,
-                  },
-                  class: '',
-                  on: {
-                    "on-ok": () => {
-                      this.delete(params.row);
-                    },
-                    "on-cancel": () => {
-                    }
-                  }
-                }, '删除')
-              );
-
-              return h('div', arr);
-            }
-          }
         ]
-      };
+      }
     },
     computed: mapGetters({
       pageNumOpts: "client/pageNumOpts",
@@ -285,36 +136,40 @@
       dataInfo: "client/dataInfo"
     }),
     methods: {
+      headIndex(index) {
+        return index + 1
+      },
+
       searchInputChange(event) {
-        this.$message.error("searchInputChange");
+        this.$message.error("searchInputChange")
         let data = {
           pageNo: this.pageNo,
           pageNum: this.pageNumOpts[this.pageNumSelect],
           condition: this.searchInput
-        };
-        this.$store.dispatch('client/getList', data);
+        }
+        this.$store.dispatch('client/getList', data)
       },
 
       pageChange(page) {
         let data = {
           pageNo: page,
           pageNum: this.pageNumOpts[this.pageNumSelect],
-        };
-        this.$store.dispatch('client/getList', data);
+        }
+        this.$store.dispatch('client/getList', data)
       },
 
       pageSizeChage(page_size) {
         let data = {
           pageNo: this.pageNo,
           pageNum: page_size,
-        };
-        this.$store.dispatch('client/getList', data);
+        }
+        this.$store.dispatch('client/getList', data)
       },
-      create() {
-        this.$message.error("create");
+      createItem() {
+        this.$message.error("create")
         this.$store.dispatch('client/resetInfo').then(() => {
-          this.modalTitle = "新增客户";
-          this.modalDisplay = true;
+          this.itemTitle = "新增客户"
+          this.itemDisplay = true
         })
       },
 
@@ -322,72 +177,71 @@
         let data = {
           pageNo: this.pageNo,
           pageNum: this.pageNumOpts[this.pageNumSelect],
-        };
+        }
 
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (this.modalTitle === '修改客户') {
+            if (this.itemTitle === '修改客户') {
               this.$store.dispatch('client/mdfInfo').then((response) => {
-                if (response.data.code === 0) {
-                  this.$store.dispatch('client/getList', data);
-                  this.modalDisplay = false;
-                }else if (response.data.code === 1) {
-                  this.$Message.error(response.data.desc);
+                if (response.code === 0) {
+                  this.$store.dispatch('client/getList', data)
+                  this.itemDisplay = false
+                } else {
+                  this.$Message.error(response.desc)
                 }
-              });
+              })
             } else {
-                this.$store.dispatch('client/addInfo').then((response) => {
-                  if (response.data.code === 0) {
-                    this.$store.dispatch('client/getList', data);
-                    this.modalDisplay = false;
-                  }else if (response.data.code === 1) {
-                    this.$Message.error(response.data.desc);
-                  }
-                });
+              this.$store.dispatch('client/addInfo').then((response) => {
+                if (response.code === 0) {
+                  this.$store.dispatch('client/getList', data)
+                  this.itemDisplay = false
+                } else {
+                  this.$Message.error(response.desc)
+                }
+              })
             }
           }
-        });
+        })
       },
 
       formReset(name) {
-        this.modalDisplay = false;
+        this.itemDisplay = false
       },
 
-      modify(row) {
+      modifyItem(row) {
         this.$store.dispatch('client/getInfo').then((response) => {
-          this.modalTitle = "修改客户";
-          this.modalDisplay = true;
-        });
+          this.itemTitle = "修改客户"
+          this.itemDisplay = true
+        })
       },
 
-      delete(row) {
+      deleteItem(row) {
         this.$store.dispatch('client/getInfo').then((response) => {
           this.$store.dispatch('client/delInfo').then((response) => {
-            if (response.data.code === 0) {
-              this.$Message.success(response.data.desc);
+            if (response.code === 0) {
+              this.$Message.success(response.desc)
               let data = {
                 pageNo: this.pageNo,
                 pageNum: this.pageNumOpts[this.pageNumSelect],
-              };
-              this.$store.dispatch('client/getList', data);
-            }else if(response.data.code === 1){
-              this.$Message.error(response.data.desc);
+              }
+              this.$store.dispatch('client/getList', data)
+            } else {
+              this.$Message.error(response.desc)
             }
-          });
-        });
+          })
+        })
       },
     },
     created() {
-      this.tabHeight = (document.documentElement.clientHeight - 160 - 40);
       let data = {
         pageNo: this.pageNo,
         pageNum: this.pageNumOpts[this.pageNumSelect],
-      };
-      this.$store.dispatch('client/getList', data);
-      this.$store.dispatch('client/resetInfo');
+      }
+      this.$store.dispatch('client/getList', data)
+      this.$store.dispatch('client/resetInfo')
     }
-  };
+  }
 </script>
 
-<style lang="less">
+<style lang="scss">
 </style>

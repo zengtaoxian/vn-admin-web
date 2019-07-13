@@ -32,7 +32,7 @@ export default {
     if (data) {
       return {
         code: 0,
-        data
+        data: data
       }
     }
     return {

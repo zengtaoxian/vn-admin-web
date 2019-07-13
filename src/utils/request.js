@@ -33,7 +33,7 @@ service.interceptors.response.use(
     const res = response.data
     if (res.code !== 0) {
       Message({
-        message: res.message,
+        message: res.desc,
         type: 'error',
         duration: 5 * 1000
       })
@@ -55,7 +55,7 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject('error')
+      return Promise.reject(response.data)
     } else {
       return response.data
     }
@@ -64,7 +64,7 @@ service.interceptors.response.use(
     //for debug
     console.log('err' + error)
     Message({
-      message: error.message,
+      message: error,
       type: 'error',
       duration: 5 * 1000
     })
