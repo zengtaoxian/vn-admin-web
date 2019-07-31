@@ -93,6 +93,10 @@
         },
         tableHead: [
           {
+            label: 'ID',
+            prop: 'id',
+          },
+          {
             label: '名称',
             prop: 'name'
           },
@@ -165,8 +169,8 @@
         }
         this.$store.dispatch('client/getList', data)
       },
+
       createItem() {
-        this.$message.error("create")
         this.$store.dispatch('client/resetInfo').then(() => {
           this.itemTitle = "新增客户"
           this.itemDisplay = true

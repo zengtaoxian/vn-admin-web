@@ -45,9 +45,8 @@ const actions = {
   Login({ commit }, userInfo) {
     return new Promise((resolve, reject) => {
       login(userInfo).then(response => {
-        const data = response.data
-        Cookies.set(LOGIN_TOKEN, data.token)
-        commit(LOGIN_TOKEN, data.token)
+        Cookies.set(LOGIN_TOKEN, userInfo.username)
+        commit(LOGIN_TOKEN, userInfo.username)
         resolve()
       }).catch(error => {
         reject(error)
