@@ -23,7 +23,7 @@ import '@/icons' // icon
  * it will intercept your request, so you won't see the request in the network.
  * If you remove `../mock` it will automatically request easy-mock data.
  */
-import '../mock' // simulation data
+// import '../mock' // simulation data
 
 Vue.use(iView)
 Vue.use(ElementUI, { locale })

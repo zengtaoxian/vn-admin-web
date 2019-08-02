@@ -59,14 +59,14 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo({ token: state.token }).then(response => {
         const data = response.data
-        if (data.roles && data.roles.length > 0) {
-          // 验证返回的roles是否是一个非空数组
-          commit(LOGIN_ROLES, data.roles)
+        if (data.roleList && data.roleList.length > 0) {
+          // 验证返回的roleList是否是一个非空数组
+          commit(LOGIN_ROLES, data.roleList)
         } else {
-          reject('getInfo: roles must be a non-null array!')
+          reject('getInfo: roleList must be a non-null array!')
         }
-        commit(LOGIN_NAME, data.name)
-        commit(LOGIN_AVATAR, data.avatar)
+        commit(LOGIN_NAME, data.userName)
+        commit(LOGIN_AVATAR, "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif")
         resolve(response)
       }).catch(error => {
         reject(error)

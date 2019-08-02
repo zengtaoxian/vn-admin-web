@@ -12,7 +12,7 @@ export function delInfo(data) {
   return request({
     url: '/client/del',
     method: 'get',
-    params: data
+    data: data
   })
 }
 
@@ -20,7 +20,7 @@ export function mdfInfo(data) {
   return request({
     url: '/client/mdf',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
@@ -28,14 +28,14 @@ export function getInfo(data) {
   return request({
     url: '/client/info',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
 export function getList(data) {
   return request({
-    url: '/client/list',
+    url: 'comsumer/list',
     method: 'post',
-    params: data
+    data: data
   })
 }

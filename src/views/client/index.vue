@@ -238,8 +238,8 @@
     },
     created() {
       let data = {
-        pageNo: this.pageNo,
-        pageNum: this.pageNumOpts[this.pageNumSelect],
+        page: this.pageNo,
+        limit: this.pageNumOpts[this.pageNumSelect],
       }
       this.$store.dispatch('client/getList', data)
       this.$store.dispatch('client/resetInfo')
