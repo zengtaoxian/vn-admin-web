@@ -54,11 +54,11 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo({ userId: state.token }).then(response => {
         const data = response.data
-        if (data.roleList && data.roleList.length > 0) {
+        if (data.roleIdList && data.roleIdList.length > 0) {
           // 验证返回的roleList是否是一个非空数组
-          commit(LOGIN_ROLES, data.roleList)
+          commit(LOGIN_ROLES, data.roleIdList)
         } else {
-          reject('getInfo: roleList must be a non-null array!')
+          reject('getInfo: roleIdList must be a non-null array!')
         }
         commit(LOGIN_NAME, data.userName)
         resolve(response)

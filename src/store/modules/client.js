@@ -21,7 +21,7 @@ const state = {
     mobile: '',
     balance: '',
     overdraftLimit: '',
-    aoId: '',
+    aoName: '',
     createTime: '',
     updateTime: ''
   }
@@ -118,7 +118,7 @@ const actions = {
       mobile: '',
       balance: '',
       overdraftLimit: '',
-      aoId: '',
+      aoName: '',
       createTime: '',
       updateTime: ''
     };

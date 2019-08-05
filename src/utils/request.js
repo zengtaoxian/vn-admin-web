@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Message, MessageBox } from 'element-ui'
 import store from '../store'
+import guid from './common.js'
 
 // 创建axios实例
 const service = axios.create({
@@ -17,6 +18,8 @@ service.interceptors.request.use(
     //   config.headers['X-Token'] = store.state.login.token
     // }
     config.headers['Content-Type'] = 'application/json;charset=utf-8'
+    config.url = `${config.url}` + '?uid=' + guid();
+
     return config
   },
   error => {

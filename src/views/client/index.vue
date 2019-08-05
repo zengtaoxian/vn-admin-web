@@ -67,7 +67,7 @@
                     },
                     {
                         label: '开户人',
-                        prop: 'aoId'
+                        prop: 'aoName'
                     },
                     {
                         label: '创建时间',
