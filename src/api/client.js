@@ -10,15 +10,15 @@ export function addInfo(data) {
 
 export function delInfo(data) {
   return request({
-    url: '/client/del',
-    method: 'get',
+    url: 'client/delete',
+    method: 'post',
     data: data
   })
 }
 
 export function mdfInfo(data) {
   return request({
-    url: '/client/mdf',
+    url: 'client/save',
     method: 'post',
     data: data
   })
@@ -34,7 +34,7 @@ export function getInfo(data) {
 
 export function getList(data) {
   return request({
-    url: 'comsumer/list',
+    url: 'client/list',
     method: 'post',
     data: data
   })

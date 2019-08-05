@@ -11,14 +11,14 @@ export function login(data) {
 export function getInfo(data) {
   return request({
     url: '/user/info',
-    method: 'get',
-    params: data
+    method: 'post',
+    data: data
   })
 }
 
 export function logout() {
   return request({
-    url: '/user/logout',
+    url: '/logout',
     method: 'post'
   })
 }

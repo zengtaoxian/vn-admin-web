@@ -17,9 +17,9 @@ Mock.XHR.prototype.send = function() {
 // })
 
 // User
-Mock.mock(/\/user\/login/, 'post', loginAPI.login)
-Mock.mock(/\/user\/info/, 'get', loginAPI.getInfo)
-Mock.mock(/\/user\/logout/, 'post', loginAPI.logout)
+Mock.mock(/\/login/, 'post', loginAPI.login)
+Mock.mock(/\/user\/info/, 'post', loginAPI.getInfo)
+Mock.mock(/\/logout/, 'post', loginAPI.logout)
 
 // Table
 Mock.mock(/\/table\/list/, 'get', tableAPI.list)
@@ -29,6 +29,6 @@ Mock.mock(/\/client\/add/, 'post', clientAPI.addInfo)
 Mock.mock(/\/client\/del/, 'post', clientAPI.delInfo)
 Mock.mock(/\/client\/mdf/, 'post', clientAPI.mdfInfo)
 Mock.mock(/\/client\/info/, 'post', clientAPI.getInfo)
-Mock.mock(/\/client\/list/, 'post', clientAPI.getList())
+Mock.mock(/\/customer\/list/, 'post', clientAPI.getList())
 
 export default Mock

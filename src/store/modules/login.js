@@ -45,8 +45,9 @@ const actions = {
   Login({ commit }, userInfo) {
     return new Promise((resolve, reject) => {
       login(userInfo).then(response => {
-        Cookies.set(LOGIN_TOKEN, userInfo.username)
-        commit(LOGIN_TOKEN, userInfo.username)
+        const data = response.data
+        Cookies.set(LOGIN_TOKEN, data.userId)
+        commit(LOGIN_TOKEN, data.userId)
         resolve()
       }).catch(error => {
         reject(error)
@@ -57,7 +58,7 @@ const actions = {
   // 获取用户信息
   GetInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo({ token: state.token }).then(response => {
+      getInfo({ userId: state.token }).then(response => {
         const data = response.data
         if (data.roleList && data.roleList.length > 0) {
           // 验证返回的roleList是否是一个非空数组

@@ -1,33 +1,55 @@
 import { param2Obj } from './utils'
 
-const tokens = {
+const userIds = {
   admin: {
-    token: 'admin-token'
+    userId: '11f2b49c-f20c-4a47-a10a-843ace1e5a54'
   },
   editor: {
-    token: 'editor-token'
+    userId: '11f2b49c-f20c-4a47-a10a-843ace1e5a76'
   }
 }
 
 const users = {
-  'admin-token': {
-    roles: ['admin'],
-    introduction: 'I am a super administrator',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super1'
+  '11f2b49c-f20c-4a47-a10a-843ace1e5a54': {
+    userId: "11f2b49c-f20c-4a47-a10a-843ace1e5a54",
+    userName: "admin",
+    sex: "男",
+    email: "root@renren.io",
+    mobile: "13612345678",
+    status: 1,
+    roleList: [
+      {
+        roleId: 1,
+        roleName: "admin"
+      }
+    ],
+    createTime: "2016-11-11 19:11:11",
+    updateTime: "2017-11-11 19:11:11",
+    userLevel: "admin"
   },
-  'editor-token': {
-    roles: ['editor'],
-    introduction: 'I am an editor',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal2'
+  '11f2b49c-f20c-4a47-a10a-843ace1e5a76': {
+    userId: "11f2b49c-f20c-4a47-a10a-843ace1e5a76",
+    userName: "editor",
+    sex: "女",
+    email: "root@renren.io",
+    mobile: "13612345678",
+    status: 1,
+    roleList: [
+      {
+        roleId: 1,
+        roleName: "editor"
+      }
+    ],
+    createTime: "2016-11-11 19:11:11",
+    updateTime: "2017-11-11 19:11:11",
+    userLevel: "editor"
   }
 }
 
 export default {
   login: req => {
     const { username } = JSON.parse(req.body)
-    const data = tokens[username]
+    const data = userIds[username]
 
     if (data) {
       return {
@@ -41,8 +63,8 @@ export default {
     }
   },
   getInfo: req => {
-    const { token } = param2Obj(req.url)
-    const info = users[token]
+    const { userId } = param2Obj(req.url)
+    const info = users[userId]
 
     if (info) {
       return {

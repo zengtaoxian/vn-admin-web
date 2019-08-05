@@ -49,7 +49,7 @@
     <el-dialog :visible.sync="itemDisplay" :title="itemTitle" v-loading="loading" width="35%">
       <el-form ref="itemForm" :model="dataInfo" :rules="formRules" label-width="15%">
         <el-form-item label="名称">
-          <el-input v-model="dataInfo.name"></el-input>
+          <el-input v-model="dataInfo.userName"></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="dataInfo.email"></el-input>
@@ -66,13 +66,13 @@
     </el-dialog>
 
     <div v-if="pageTotal">
-      <Page :total="pageTotal" :current="pageNo" :page-size="pageNumOpts[pageNumSelect]"
+      <el-pagination layout="prev, pager, next" :total="pageTotal"
+                     :current-page="pageNo" :page-size="pageNumOpts[pageNumSelect]"
             size="small"
-            :page-size-opts="pageNumOpts"
-            show-elevator show-sizer show-total placement="top"
-            @on-page-size-change="pageSizeChage"
-            @on-change="pageChange">
-      </Page>
+            :page-sizes="pageNumOpts"
+            @size-change="pageSizeChage"
+            @current-change="pageChange">
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -87,18 +87,18 @@
         itemTitle: "新增客户",
         searchInput: "",
         formRules: {
-          name: [
+          userName: [
             {required: true, message: '名称不能为空', trigger: 'blur'},
           ]
         },
         tableHead: [
           {
             label: 'ID',
-            prop: 'id',
+            prop: 'userId',
           },
           {
             label: '名称',
-            prop: 'name'
+            prop: 'userName'
           },
           {
             label: '邮箱',
@@ -114,11 +114,11 @@
           },
           {
             label: '透支额度',
-            prop: 'overdraft'
+            prop: 'overdraftLimit'
           },
           {
             label: '开户人',
-            prop: 'createUser'
+            prop: 'aoId'
           },
           {
             label: '创建时间',
@@ -147,8 +147,8 @@
       searchInputChange(event) {
         this.$message.error("searchInputChange")
         let data = {
-          pageNo: this.pageNo,
-          pageNum: this.pageNumOpts[this.pageNumSelect],
+          page: this.pageNo,
+          limit: this.pageNumOpts[this.pageNumSelect],
           condition: this.searchInput
         }
         this.$store.dispatch('client/getList', data)
@@ -156,16 +156,16 @@
 
       pageChange(page) {
         let data = {
-          pageNo: page,
-          pageNum: this.pageNumOpts[this.pageNumSelect],
+          page: page,
+          limit: this.pageNumOpts[this.pageNumSelect],
         }
         this.$store.dispatch('client/getList', data)
       },
 
       pageSizeChage(page_size) {
         let data = {
-          pageNo: this.pageNo,
-          pageNum: page_size,
+          page: this.pageNo,
+          limit: page_size,
         }
         this.$store.dispatch('client/getList', data)
       },
@@ -179,8 +179,8 @@
 
       formSubmit(name) {
         let data = {
-          pageNo: this.pageNo,
-          pageNum: this.pageNumOpts[this.pageNumSelect],
+          page: this.pageNo,
+          limit: this.pageNumOpts[this.pageNumSelect],
         }
 
         this.$refs[name].validate((valid) => {
@@ -213,26 +213,24 @@
       },
 
       modifyItem(row) {
-        this.$store.dispatch('client/getInfo').then((response) => {
+        this.$store.dispatch('client/getInfo', row).then((response) => {
           this.itemTitle = "修改客户"
           this.itemDisplay = true
         })
       },
 
       deleteItem(row) {
-        this.$store.dispatch('client/getInfo').then((response) => {
-          this.$store.dispatch('client/delInfo').then((response) => {
-            if (response.code === 0) {
-              this.$Message.success(response.desc)
-              let data = {
-                pageNo: this.pageNo,
-                pageNum: this.pageNumOpts[this.pageNumSelect],
-              }
-              this.$store.dispatch('client/getList', data)
-            } else {
-              this.$Message.error(response.desc)
+        this.$store.dispatch('client/delInfo', row).then((response) => {
+          if (response.code === 0) {
+            this.$Message.success(response.desc)
+            let data = {
+              page: this.pageNo,
+              limit: this.pageNumOpts[this.pageNumSelect],
             }
-          })
+            this.$store.dispatch('client/getList', data)
+          } else {
+            this.$Message.error(response.desc)
+          }
         })
       },
     },

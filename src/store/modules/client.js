@@ -15,13 +15,13 @@ const state = {
   pageTotal: 10,
   dataList: [],
   dataInfo: {
-    id: '',
-    name: '',
+    userId: '',
+    userName: '',
     email: '',
     mobile: '',
     balance: '',
-    overdraft: '',
-    createUser: '',
+    overdraftLimit: '',
+    aoId: '',
     createTime: '',
     updateTime: ''
   }
@@ -49,7 +49,10 @@ const actions = {
   }),
 
   //删除信息
-  delInfo: ({commit}, data) => new Promise((reslove, reject) => {
+  delInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
+    let data = [
+      reqData.userId
+    ];
     delInfo(data).then(response => {
       reslove(response);
     }).catch(err => {
@@ -67,18 +70,18 @@ const actions = {
   }),
 
   //获取信息
-  getInfo: ({commit}) => new Promise((resolve, reject) => {
+  getInfo: ({commit}, reqData) => new Promise((resolve, reject) => {
     let data = {
-      id: state.dataInfo.id,
+      userId: reqData.userId,
     };
     getInfo(data).then(response => {
       if (response.code === 0) {
-        let data = response.data;
+        let respData = response.data;
         if (response.code === 0) {
-          commit(DATA_INFO, JSON.parse(JSON.stringify(data)));
-          resolve(data);
+          commit(DATA_INFO, JSON.parse(JSON.stringify(respData)));
+          resolve(respData);
         } else {
-          reject(data);
+          reject(respData);
         }
       } else {
         reject(response);
@@ -89,15 +92,15 @@ const actions = {
   }),
 
   //获取列表
-  getList: ({commit}, data) => new Promise((reslove, reject) => {
-    getList(data).then(response => {
+  getList: ({commit}, reqData) => new Promise((reslove, reject) => {
+    getList(reqData).then(response => {
       if (response.code === 0) {
-        let idx = state.pageNumOpts.indexOf(data.pageNum);
+        let idx = state.pageNumOpts.indexOf(reqData.limit);
         if (-1 !== idx) {
-          commit(PAGE_NO, data.pageNo);
+          commit(PAGE_NO, reqData.page);
           commit(PAGE_NUM_SELECT, idx);
-          commit(DATA_LIST, response.data);
-          commit(PAGE_TOTAL, response.total);
+          commit(DATA_LIST, response.data.list);
+          commit(PAGE_TOTAL, response.data.totalPage);
         }
       }
       reslove(response);
@@ -109,13 +112,13 @@ const actions = {
   //重置信息
   resetInfo: ({commit}) => new Promise((reslove, reject) => {
     let dataInfo = {
-      id: '',
-      name: '',
+      userId: '',
+      userName: '',
       email: '',
       mobile: '',
       balance: '',
-      overdraft: '',
-      createUser: '',
+      overdraftLimit: '',
+      aoId: '',
       createTime: '',
       updateTime: ''
     };
