@@ -3,10 +3,9 @@
     <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/>
     <breadcrumb />
     <el-dropdown class="avatar-container" trigger="click">
-      <div class="avatar-wrapper">
-        {{ name }}
-        <div class="el-icon-caret-bottom"></div>
-      </div>
+      <span class="el-dropdown-link">
+         {{ userName }} <i class="el-icon-caret-bottom"></i>
+      </span>
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
         <router-link class="inlineBlock" to="/">
           <el-dropdown-item>
@@ -34,7 +33,7 @@ export default {
   computed: {
     ...mapGetters({
       sidebar: 'sidebar/sidebar',
-      name: 'login/name'
+      userName: 'login/name'
     })
   },
   methods: {
@@ -72,23 +71,6 @@ export default {
     display: inline-block;
     position: absolute;
     right: 35px;
-    .avatar-wrapper {
-      cursor: pointer;
-      margin-top: 5px;
-      position: relative;
-      line-height: initial;
-      .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-      }
-      .el-icon-caret-bottom {
-        position: absolute;
-        right: -20px;
-        top: 15px;
-        font-size: 16px;
-      }
-    }
   }
 }
 </style>

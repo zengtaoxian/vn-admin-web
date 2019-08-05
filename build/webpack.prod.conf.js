@@ -16,6 +16,7 @@ function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
+// 获取当前环境
 const env = require('../config/prod.env')
 
 // For NamedChunksPlugin
@@ -25,20 +26,25 @@ const nameLength = 4
 const webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
   module: {
+    // 将.vue外部的css或css预处理器文件进行处理
     rules: utils.styleLoaders({
       sourceMap: config.build.productionSourceMap,
       extract: true,
       usePostCSS: true
     })
   },
+
+  // 是否开启调试
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash:8].js'),
+    // 定义在非入口文件引用的文件的名称
     chunkFilename: utils.assetsPath('js/[name].[chunkhash:8].js')
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
+    // 定义一个在编译时间内可以使用的全局变量，用来关闭vue的所有警告功能
     new webpack.DefinePlugin({
       'process.env': env
     }),
@@ -50,9 +56,15 @@ const webpackConfig = merge(baseWebpackConfig, {
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
+    // 构建要编译输出的index.html,并在文件中嵌入资源文件
     new HtmlWebpackPlugin({
+      // 输出的HTML文件名
       filename: config.build.index,
+      // 模板文件路径
       template: 'index.html',
+      // 设置为true或body可以将js代码放到<body>元素最后
+      // 设置为head将js代码加到<head>里面
+      // 设置为false所有静态资源css和JavaScript都不会注入到模板文件中
       inject: true,
       favicon: resolve('favicon.ico'),
       title: 'vue-admin-template',
@@ -91,6 +103,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     // keep module.id stable when vender modules does not change
     new webpack.HashedModuleIdsPlugin(),
     // copy custom static assets
+    // 复制static文件夹内的静态资源到打包好的文件中
+    // 具体的路径是之前我们设置的"config.build.assetsSubDirectory"
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, '../static'),
@@ -134,7 +148,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     ]
   }
 })
-
+// 如果开启了Gzip压缩，使用以下配置
 if (config.build.productionGzip) {
   const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
@@ -150,6 +164,7 @@ if (config.build.productionGzip) {
   )
 }
 
+// 如果开启了编译报告，使用以下配置
 if (config.build.generateAnalyzerReport || config.build.bundleAnalyzerReport) {
   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
     .BundleAnalyzerPlugin

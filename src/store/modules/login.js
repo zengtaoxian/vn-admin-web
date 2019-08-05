@@ -4,14 +4,12 @@ import Cookies from 'js-cookie'
 // consts
 const LOGIN_TOKEN = 'LOGIN_TOKEN'
 const LOGIN_NAME = 'LOGIN_NAME'
-const LOGIN_AVATAR = 'LOGIN_AVATAR'
 const LOGIN_ROLES = 'LOGIN_ROLES'
 
 // states
 const state = {
   token: Cookies.get(LOGIN_TOKEN),
   name: '',
-  avatar: '',
   roles: []
 }
 
@@ -19,7 +17,6 @@ const state = {
 const getters = {
   token: state => state.token,
   name: state => state.name,
-  avatar: state => state.avatar,
   roles: state => state.roles
 }
 
@@ -30,9 +27,6 @@ const mutations = {
   },
   LOGIN_NAME: (state, name) => {
     state.name = name
-  },
-  LOGIN_AVATAR: (state, avatar) => {
-    state.avatar = avatar
   },
   LOGIN_ROLES: (state, roles) => {
     state.roles = roles
@@ -67,7 +61,6 @@ const actions = {
           reject('getInfo: roleList must be a non-null array!')
         }
         commit(LOGIN_NAME, data.userName)
-        commit(LOGIN_AVATAR, "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif")
         resolve(response)
       }).catch(error => {
         reject(error)
