@@ -48,15 +48,10 @@
     </el-table>
 
     <el-dialog :visible.sync="itemDisplay" :title="itemTitle" v-loading="loading" width="35%">
-      <el-form ref="itemForm" :model="dataInfo" :rules="formRules" label-width="15%">
-        <slot name="addDataInfo"></slot>
-        <slot></slot>
-      </el-form>
-
+      <slot :itemLabelWidth="itemLabelWidth" name="item"></slot>
       <span slot="footer" class="dialog-footer">
-          <el-button size="small" @click="$emit('formReset')">取消</el-button>
-          <el-button size="small" type="primary" @click="$emit('formSubmit', 'itemForm')">确定</el-button>
-        </span>
+        <slot name="button"></slot>
+      </span>
     </el-dialog>
 
     <div v-if="pageTotal">
@@ -72,68 +67,69 @@
 </template>
 
 <script>
-    export default {
-        name: "listTemplate",
-        props: {
-            searchPlace: {
-                type: String,
-                required: true
-            },
-            searchInput: {
-                type: String,
-                required: true
-            },
-            dataList: {
-                type: Array,
-                required: true
-            },
-            tableHead: {
-                type: Array,
-                required: true
-            },
-            itemDisplay: {
-                type: Boolean,
-                required: true
-            },
-            itemTitle: {
-                type: String,
-                required: true
-            },
-            loading: {
-                type: Boolean,
-                required: true
-            },
-            dataInfo: {
-                type: Object,
-                required: true
-            },
-            formRules: {
-                type: Object,
-                required: true
-            },
-            pageTotal: {
-                type: Number,
-                required: true
-            },
-            pageNo: {
-                type: Number,
-                required: true
-            },
-            pageNumOpts: {
-                type: Array,
-                required: true
-            },
-            pageNumSelect: {
-                type: Number,
-                required: true
-            }
-        },
-        methods: {
-            headIndex(index) {
-                return index + 1
-            },
-        }
+  export default {
+    name: "listTemplate",
+    data() {
+      return {
+        itemLabelWidth : "15%"
+      }
+    },
+    props: {
+      searchPlace: {
+        type: String,
+        required: true
+      },
+      searchInput: {
+        type: String,
+        required: true
+      },
+      dataList: {
+        type: Array,
+        required: true
+      },
+      tableHead: {
+        type: Array,
+        required: true
+      },
+      itemDisplay: {
+        type: Boolean,
+        required: true
+      },
+      itemTitle: {
+        type: String,
+        required: true
+      },
+      loading: {
+        type: Boolean,
+        required: true
+      },
+      dataInfo: {
+        type: Object,
+        required: true
+      },
+      pageTotal: {
+        type: Number,
+        required: true
+      },
+      pageNo: {
+        type: Number,
+        required: true
+      },
+      pageNumOpts: {
+        type: Array,
+        required: true
+      },
+      pageNumSelect: {
+        type: Number,
+        required: true
+      }
+    },
+    methods: {
+      headIndex(index) {
+        return index + 1
+      },
     }
+  }
 </script>
 
 <style scoped>

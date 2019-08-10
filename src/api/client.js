@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addInfo(data) {
   return request({
-    url: '/client/add',
+    url: 'client/save',
     method: 'post',
     data: data
   })
