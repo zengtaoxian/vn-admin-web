@@ -71,6 +71,10 @@
             prop: 'mobile'
           },
           {
+            label: '状态',
+            prop: 'status'
+          },
+          {
             label: '余额',
             prop: 'balance'
           },
@@ -102,12 +106,19 @@
       dataInfo: "client/dataInfo"
     }),
     methods: {
-      searchInputChange(event) {
-        this.$message.error("searchInputChange")
+      searchInputChange(searchInput) {
+        this.searchInput = searchInput
         let data = {
           page: this.pageNo,
           limit: this.pageNumOpts[this.pageNumSelect],
-          condition: this.searchInput
+        }
+        if (searchInput) {
+          data['like'] = {
+            userId: searchInput,
+            userName: searchInput,
+            email: searchInput,
+            mobile: searchInput
+          }
         }
         this.$store.dispatch('client/getList', data)
       },
@@ -149,16 +160,17 @@
                   this.$store.dispatch('client/getList', data)
                   this.itemDisplay = false
                 } else {
-                  this.$Message.error(response.desc)
+                  this.$Message.error(response.msg)
                 }
               })
             } else {
               this.$store.dispatch('client/addInfo').then((response) => {
+                console.log(response)
                 if (response.code === 0) {
                   this.$store.dispatch('client/getList', data)
                   this.itemDisplay = false
                 } else {
-                  this.$Message.error(response.desc)
+                  this.$Message.error(response.msg)
                 }
               })
             }
@@ -181,14 +193,14 @@
       deleteItem(row) {
         this.$store.dispatch('client/delInfo', row).then((response) => {
           if (response.code === 0) {
-            this.$Message.success(response.desc)
+            this.$Message.success(response.msg)
             let data = {
               page: this.pageNo,
               limit: this.pageNumOpts[this.pageNumSelect],
             }
             this.$store.dispatch('client/getList', data)
           } else {
-            this.$Message.error(response.desc)
+            this.$Message.error(response.msg)
           }
         })
       },

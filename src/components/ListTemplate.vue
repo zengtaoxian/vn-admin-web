@@ -6,9 +6,9 @@
         </el-button>
       </el-col>
       <el-col :offset="13" :span="6">
-        <el-input size="small" :placeholder="searchPlace" @on-enter="$emit('searchInputChange')"
-                  v-model.trim="searchInput">
-          <el-button slot="append" icon="el-icon-search" @click="$emit('searchInputChange')"></el-button>
+        <el-input size="small" :placeholder="searchPlace" @change="$emit('searchInputChange', curInput)"
+                  v-model.trim="curInput">
+          <el-button slot="append" icon="el-icon-search" @click="$emit('searchInputChange', curInput)"></el-button>
         </el-input>
       </el-col>
     </el-row>
@@ -71,7 +71,8 @@
     name: "listTemplate",
     data() {
       return {
-        itemLabelWidth : "15%"
+        itemLabelWidth : "15%",
+        curInput: this.searchInput
       }
     },
     props: {

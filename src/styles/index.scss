@@ -75,4 +75,10 @@ a:hover {
 
 .app-container {
   padding: 20px;
+
+  .el-scrollbar__wrap {
+    overflow: scroll;
+    width: 110%;
+    height: 120%;
+  }
 }

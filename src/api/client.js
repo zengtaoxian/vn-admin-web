@@ -18,7 +18,7 @@ export function delInfo(data) {
 
 export function mdfInfo(data) {
   return request({
-    url: 'client/save',
+    url: 'client/update',
     method: 'post',
     data: data
   })

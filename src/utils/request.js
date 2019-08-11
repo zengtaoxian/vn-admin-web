@@ -7,7 +7,10 @@ import guid from './common.js'
 const service = axios.create({
   baseURL: process.env.BASE_API, // api 的 base_url
   timeout: 5000, // 请求超时时
-  withCredentials: true
+  withCredentials: true,
+  params: {
+    rid : guid()
+  }
 })
 
 // request拦截器
@@ -18,7 +21,6 @@ service.interceptors.request.use(
     //   config.headers['X-Token'] = store.state.login.token
     // }
     config.headers['Content-Type'] = 'application/json;charset=utf-8'
-    config.url = `${config.url}` + '?uid=' + guid();
 
     return config
   },
@@ -38,7 +40,7 @@ service.interceptors.response.use(
     const res = response.data
     if (res.code !== 0) {
       Message({
-        message: res.desc,
+        message: res.msg + res.code,
         type: 'error',
         duration: 5 * 1000
       })
