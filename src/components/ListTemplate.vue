@@ -6,9 +6,9 @@
         </el-button>
       </el-col>
       <el-col :offset="13" :span="6">
-        <el-input size="small" :placeholder="searchPlace" @change="$emit('searchInputChange', curInput)"
-                  v-model.trim="curInput">
-          <el-button slot="append" icon="el-icon-search" @click="$emit('searchInputChange', curInput)"></el-button>
+        <el-input size="small" :placeholder="searchPlace" @change="$emit('searchInputChange', curSearchInput)"
+                  v-model.trim="curSearchInput">
+          <el-button slot="append" icon="el-icon-search" @click="$emit('searchInputChange', curSearchInput)"></el-button>
         </el-input>
       </el-col>
     </el-row>
@@ -28,18 +28,22 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-row>
-            <el-col :span="12">
+            <el-col :span="6">
               <i
                 class="el-icon-edit"
                 @click="$emit('modifyItem', scope.row)">
-                修改
               </i>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="6">
               <i
                 class="el-icon-delete"
                 @click="$emit('deleteItem', scope.row)">
-                删除
+              </i>
+            </el-col>
+            <el-col :span="6" v-if="reset">
+              <i
+                class="el-icon-refresh"
+                @click="$emit('resetItem', scope.row)">
               </i>
             </el-col>
           </el-row>
@@ -47,7 +51,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :visible.sync="itemDisplay" :title="itemTitle" v-loading="loading" width="35%">
+    <el-dialog :visible="itemDisplay" :title="itemTitle" v-loading="loading" width="35%">
       <slot :itemLabelWidth="itemLabelWidth" name="item"></slot>
       <span slot="footer" class="dialog-footer">
         <slot name="button"></slot>
@@ -55,12 +59,13 @@
     </el-dialog>
 
     <div v-if="pageTotal">
-      <el-pagination layout="prev, pager, next" :total="pageTotal"
-                     :current-page="pageNo" :page-size="pageNumOpts[pageNumSelect]"
+      <el-pagination layout="total, sizes, prev, pager, next, jumper" :total="pageTotal"
+                     :current-page.sync="curPageNo" :page-size.sync="curPageNumSelect"
                      size="small"
+                     background
                      :page-sizes="pageNumOpts"
-                     @size-change="$emit('pageSizeChange')"
-                     @current-change="$emit('pageChange')">
+                     @size-change="$emit('pageSizeChange', curPageNumSelect)"
+                     @current-change="$emit('pageChange', curPageNo)">
       </el-pagination>
     </div>
   </div>
@@ -71,8 +76,10 @@
     name: "listTemplate",
     data() {
       return {
-        itemLabelWidth : "15%",
-        curInput: this.searchInput
+        itemLabelWidth: "15%",
+        curSearchInput: this.searchInput,
+        curPageNo: this.pageNo,
+        curPageNumSelect: this.pageNumSelect
       }
     },
     props: {
@@ -123,6 +130,9 @@
       pageNumSelect: {
         type: Number,
         required: true
+      },
+      reset: {
+        type:Boolean
       }
     },
     methods: {

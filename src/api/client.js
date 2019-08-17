@@ -32,6 +32,14 @@ export function getInfo(data) {
   })
 }
 
+export function resetInfo(data) {
+  return request({
+    url: '/client/resetpassword',
+    method: 'post',
+    data: data
+  })
+}
+
 export function getList(data) {
   return request({
     url: 'client/list',

@@ -1,4 +1,4 @@
-import { addInfo, delInfo, mdfInfo, getInfo, getList } from '@/api/client'
+import { addInfo, delInfo, mdfInfo, getInfo, resetInfo, getList } from '@/api/client'
 
 //consts
 const PAGE_NUM_SELECT = 'PAGE_NUM_SELECT';
@@ -10,7 +10,7 @@ const DATA_LIST = 'DATA_LIST';
 //states
 const state = {
   pageNumOpts: [10, 20, 30, 40],
-  pageNumSelect: 0,
+  pageNumSelect: 10,
   pageNo: 1,
   pageTotal: 10,
   dataList: [],
@@ -95,13 +95,10 @@ const actions = {
   getList: ({commit}, reqData) => new Promise((reslove, reject) => {
     getList(reqData).then(response => {
       if (response.code === 0) {
-        let idx = state.pageNumOpts.indexOf(reqData.limit);
-        if (-1 !== idx) {
-          commit(PAGE_NO, reqData.page);
-          commit(PAGE_NUM_SELECT, idx);
-          commit(DATA_LIST, response.data.list);
-          commit(PAGE_TOTAL, response.data.totalPage);
-        }
+        commit(PAGE_NO, reqData.page)
+        commit(PAGE_NUM_SELECT, reqData.limit)
+        commit(DATA_LIST, response.data.list)
+        commit(PAGE_TOTAL, response.data.totalCount)
       }
       reslove(response);
     }).catch(err => {
@@ -110,7 +107,19 @@ const actions = {
   }),
 
   //重置信息
-  resetInfo: ({commit}) => new Promise((reslove, reject) => {
+  resetInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
+    let data = {
+      userId: reqData.userId,
+    };
+    resetInfo(data).then(response => {
+      reslove(response);
+    }).catch(err => {
+      reject(err);
+    });
+  }),
+
+  //清空信息
+  clearInfo: ({commit}) => new Promise((reslove, reject) => {
     let dataInfo = {
       userId: '',
       userName: '',

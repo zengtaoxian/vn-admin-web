@@ -3,6 +3,7 @@
     <list-template :searchPlace="searchPlace" :searchInput="searchInput" :dataList="dataList" :tableHead="tableHead"
                    :itemDisplay="itemDisplay" :itemTitle="itemTitle" :loading="loading" :dataInfo="dataInfo"
                    :pageTotal="pageTotal" :pageNo="pageNo" :pageNumOpts="pageNumOpts" :pageNumSelect="pageNumSelect"
+                   :reset="true" @resetItem="resetItem"
                    @createItem="createItem" @searchInputChange="searchInputChange" @modifyItem="modifyItem"
                    @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
       <template slot-scope="scope" slot="item">
@@ -106,28 +107,33 @@
       dataInfo: "client/dataInfo"
     }),
     methods: {
+      addSearchInput(data) {
+        if (this.searchInput) {
+          data['like'] = {
+            userId: this.searchInput,
+            userName: this.searchInput,
+            email: this.searchInput,
+            mobile: this.searchInput
+          }
+        }
+      },
+
       searchInputChange(searchInput) {
         this.searchInput = searchInput
         let data = {
           page: this.pageNo,
-          limit: this.pageNumOpts[this.pageNumSelect],
+          limit: this.pageNumSelect,
         }
-        if (searchInput) {
-          data['like'] = {
-            userId: searchInput,
-            userName: searchInput,
-            email: searchInput,
-            mobile: searchInput
-          }
-        }
+        this.addSearchInput(data)
         this.$store.dispatch('client/getList', data)
       },
 
       pageChange(page) {
         let data = {
           page: page,
-          limit: this.pageNumOpts[this.pageNumSelect],
+          limit: this.pageNumSelect,
         }
+        this.addSearchInput(data)
         this.$store.dispatch('client/getList', data)
       },
 
@@ -136,11 +142,12 @@
           page: this.pageNo,
           limit: page_size,
         }
+        this.addSearchInput(data)
         this.$store.dispatch('client/getList', data)
       },
 
       createItem() {
-        this.$store.dispatch('client/resetInfo').then(() => {
+        this.$store.dispatch('client/clearInfo').then(() => {
           this.itemTitle = "新增客户"
           this.itemDisplay = true
         })
@@ -149,14 +156,19 @@
       formSubmit(name) {
         let data = {
           page: this.pageNo,
-          limit: this.pageNumOpts[this.pageNumSelect],
+          limit: this.pageNumSelect,
         }
+        this.addSearchInput(data)
 
         this.$refs[name].validate((valid) => {
           if (valid) {
             if (this.itemTitle === '修改客户') {
               this.$store.dispatch('client/mdfInfo').then((response) => {
                 if (response.code === 0) {
+                  this.$message({
+                    type: 'success',
+                    message: '修改成功!'
+                  });
                   this.$store.dispatch('client/getList', data)
                   this.itemDisplay = false
                 } else {
@@ -165,8 +177,11 @@
               })
             } else {
               this.$store.dispatch('client/addInfo').then((response) => {
-                console.log(response)
                 if (response.code === 0) {
+                  this.$message({
+                    type: 'success',
+                    message: '添加成功!'
+                  });
                   this.$store.dispatch('client/getList', data)
                   this.itemDisplay = false
                 } else {
@@ -191,27 +206,75 @@
       },
 
       deleteItem(row) {
-        this.$store.dispatch('client/delInfo', row).then((response) => {
-          if (response.code === 0) {
-            this.$Message.success(response.msg)
-            let data = {
-              page: this.pageNo,
-              limit: this.pageNumOpts[this.pageNumSelect],
+        this.$confirm('确定删除客户?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('client/delInfo', row).then((response) => {
+            if (response.code === 0) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+
+              let data = {
+                page: this.pageNo,
+                limit: this.pageNumSelect,
+              }
+              this.addSearchInput(data)
+              this.$store.dispatch('client/getList', data)
+            } else {
+              this.$Message.error(response.msg)
             }
-            this.$store.dispatch('client/getList', data)
-          } else {
-            this.$Message.error(response.msg)
-          }
-        })
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消删除!'
+          });
+        });
+      },
+
+      resetItem(row) {
+        this.$confirm('确定重置密码?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('client/resetInfo', row).then((response) => {
+            if (response.code === 0) {
+              this.$message({
+                type: 'success',
+                message: '重置成功!'
+              });
+
+              let data = {
+                page: this.pageNo,
+                limit: this.pageNumSelect,
+              }
+              this.addSearchInput(data)
+              this.$store.dispatch('client/getList', data)
+            } else {
+              this.$Message.error(response.msg)
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消重置!'
+          });
+        });
       },
     },
     created() {
       let data = {
         page: this.pageNo,
-        limit: this.pageNumOpts[this.pageNumSelect],
+        limit: this.pageNumSelect
       }
+      this.addSearchInput(data)
       this.$store.dispatch('client/getList', data)
-      this.$store.dispatch('client/resetInfo')
+      this.$store.dispatch('client/clearInfo')
     }
   }
 </script>
