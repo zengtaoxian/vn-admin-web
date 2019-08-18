@@ -8,7 +8,8 @@
       <el-col :offset="13" :span="6">
         <el-input size="small" :placeholder="searchPlace" @change="$emit('searchInputChange', curSearchInput)"
                   v-model.trim="curSearchInput">
-          <el-button slot="append" icon="el-icon-search" @click="$emit('searchInputChange', curSearchInput)"></el-button>
+          <el-button slot="append" icon="el-icon-search"
+                     @click="$emit('searchInputChange', curSearchInput)"></el-button>
         </el-input>
       </el-col>
     </el-row>
@@ -51,7 +52,8 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :visible="itemDisplay" :title="itemTitle" v-loading="loading" width="35%">
+    <el-dialog :visible="itemDisplay" :title="itemTitle" v-loading="loading" width="35%"
+               :before-close="handleClose">
       <slot :itemLabelWidth="itemLabelWidth" name="item"></slot>
       <span slot="footer" class="dialog-footer">
         <slot name="button"></slot>
@@ -79,7 +81,7 @@
         itemLabelWidth: "15%",
         curSearchInput: this.searchInput,
         curPageNo: this.pageNo,
-        curPageNumSelect: this.pageNumSelect
+        curPageNumSelect: this.pageNumSelect,
       }
     },
     props: {
@@ -132,13 +134,17 @@
         required: true
       },
       reset: {
-        type:Boolean
+        type: Boolean
       }
     },
     methods: {
       headIndex(index) {
         return index + 1
       },
+      handleClose(done) {
+        this.$emit('closeDialog')
+        done()
+      }
     }
   }
 </script>

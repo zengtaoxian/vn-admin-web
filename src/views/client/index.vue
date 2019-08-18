@@ -3,7 +3,7 @@
     <list-template :searchPlace="searchPlace" :searchInput="searchInput" :dataList="dataList" :tableHead="tableHead"
                    :itemDisplay="itemDisplay" :itemTitle="itemTitle" :loading="loading" :dataInfo="dataInfo"
                    :pageTotal="pageTotal" :pageNo="pageNo" :pageNumOpts="pageNumOpts" :pageNumSelect="pageNumSelect"
-                   :reset="true" @resetItem="resetItem"
+                   @closeDialog="closeDialog" :reset="true" @resetItem="resetItem"
                    @createItem="createItem" @searchInputChange="searchInputChange" @modifyItem="modifyItem"
                    @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
       <template slot-scope="scope" slot="item">
@@ -170,7 +170,6 @@
                     message: '修改成功!'
                   });
                   this.$store.dispatch('client/getList', data)
-                  this.itemDisplay = false
                 } else {
                   this.$Message.error(response.msg)
                 }
@@ -183,7 +182,6 @@
                     message: '添加成功!'
                   });
                   this.$store.dispatch('client/getList', data)
-                  this.itemDisplay = false
                 } else {
                   this.$Message.error(response.msg)
                 }
@@ -266,7 +264,12 @@
           });
         });
       },
+
+      closeDialog() {
+        this.itemDisplay = false
+      }
     },
+
     created() {
       let data = {
         page: this.pageNo,
