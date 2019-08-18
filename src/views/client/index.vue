@@ -121,7 +121,7 @@
       searchInputChange(searchInput) {
         this.searchInput = searchInput
         let data = {
-          page: this.pageNo,
+          page: 1,
           limit: this.pageNumSelect,
         }
         this.addSearchInput(data)
@@ -170,6 +170,7 @@
                     message: '修改成功!'
                   });
                   this.$store.dispatch('client/getList', data)
+                  this.itemDisplay = false
                 } else {
                   this.$Message.error(response.msg)
                 }
@@ -182,6 +183,7 @@
                     message: '添加成功!'
                   });
                   this.$store.dispatch('client/getList', data)
+                  this.itemDisplay = false
                 } else {
                   this.$Message.error(response.msg)
                 }
