@@ -98,13 +98,13 @@
         ]
       }
     },
-    computed: mapGetters({
-      pageNumOpts: "client/pageNumOpts",
-      pageNumSelect: "client/pageNumSelect",
-      pageNo: "client/pageNo",
-      pageTotal: "client/pageTotal",
-      dataList: "client/dataList",
-      dataInfo: "client/dataInfo"
+    computed: mapGetters('client', {
+      pageNumOpts: "pageNumOpts",
+      pageNumSelect: "pageNumSelect",
+      pageNo: "pageNo",
+      pageTotal: "pageTotal",
+      dataList: "dataList",
+      dataInfo: "dataInfo"
     }),
     methods: {
       addSearchInput(data) {
@@ -125,7 +125,7 @@
           limit: this.pageNumSelect,
         }
         this.addSearchInput(data)
-        this.$store.dispatch('client/getList', data)
+        this.$store.dispatch(this.$options.name + '/getList', data)
       },
 
       pageChange(page) {
@@ -134,7 +134,7 @@
           limit: this.pageNumSelect,
         }
         this.addSearchInput(data)
-        this.$store.dispatch('client/getList', data)
+        this.$store.dispatch(this.$options.name + '/getList', data)
       },
 
       pageSizeChange(page_size) {
@@ -143,11 +143,11 @@
           limit: page_size,
         }
         this.addSearchInput(data)
-        this.$store.dispatch('client/getList', data)
+        this.$store.dispatch(this.$options.name + '/getList', data)
       },
 
       createItem() {
-        this.$store.dispatch('client/clearInfo').then(() => {
+        this.$store.dispatch(this.$options.name + '/clearInfo').then(() => {
           this.itemTitle = "新增客户"
           this.itemDisplay = true
         })
@@ -163,26 +163,26 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             if (this.itemTitle === '修改客户') {
-              this.$store.dispatch('client/mdfInfo').then((response) => {
+              this.$store.dispatch(this.$options.name + '/mdfInfo').then((response) => {
                 if (response.code === 0) {
                   this.$message({
                     type: 'success',
                     message: '修改成功!'
                   });
-                  this.$store.dispatch('client/getList', data)
+                  this.$store.dispatch(this.$options.name + '/getList', data)
                   this.itemDisplay = false
                 } else {
                   this.$Message.error(response.msg)
                 }
               })
             } else {
-              this.$store.dispatch('client/addInfo').then((response) => {
+              this.$store.dispatch(this.$options.name + '/addInfo').then((response) => {
                 if (response.code === 0) {
                   this.$message({
                     type: 'success',
                     message: '添加成功!'
                   });
-                  this.$store.dispatch('client/getList', data)
+                  this.$store.dispatch(this.$options.name + '/getList', data)
                   this.itemDisplay = false
                 } else {
                   this.$Message.error(response.msg)
@@ -199,7 +199,7 @@
       },
 
       modifyItem(row) {
-        this.$store.dispatch('client/getInfo', row).then((response) => {
+        this.$store.dispatch(this.$options.name + '/getInfo', row).then((response) => {
           this.itemTitle = "修改客户"
           this.itemDisplay = true
         })
@@ -211,7 +211,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('client/delInfo', row).then((response) => {
+          this.$store.dispatch(this.$options.name + '/delInfo', row).then((response) => {
             if (response.code === 0) {
               this.$message({
                 type: 'success',
@@ -223,7 +223,7 @@
                 limit: this.pageNumSelect,
               }
               this.addSearchInput(data)
-              this.$store.dispatch('client/getList', data)
+              this.$store.dispatch(this.$options.name + '/getList', data)
             } else {
               this.$Message.error(response.msg)
             }
@@ -242,7 +242,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('client/resetInfo', row).then((response) => {
+          this.$store.dispatch(this.$options.name + '/resetInfo', row).then((response) => {
             if (response.code === 0) {
               this.$message({
                 type: 'success',
@@ -254,7 +254,7 @@
                 limit: this.pageNumSelect,
               }
               this.addSearchInput(data)
-              this.$store.dispatch('client/getList', data)
+              this.$store.dispatch(this.$options.name + '/getList', data)
             } else {
               this.$Message.error(response.msg)
             }
@@ -278,8 +278,8 @@
         limit: this.pageNumSelect
       }
       this.addSearchInput(data)
-      this.$store.dispatch('client/getList', data)
-      this.$store.dispatch('client/clearInfo')
+      this.$store.dispatch(this.$options.name + '/getList', data)
+      this.$store.dispatch(this.$options.name + '/clearInfo')
     }
   }
 </script>
