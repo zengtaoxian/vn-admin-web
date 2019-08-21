@@ -8,19 +8,16 @@
                    @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
       <template slot-scope="scope" slot="item">
         <el-form ref="itemForm" :model="dataInfo" :rules="formRules" :label-width="scope.itemLabelWidth">
-          <el-form-item label="名称" prop="userName">
+          <el-form-item label="号码" prop="mobile">
             <el-input v-model="dataInfo.userName"></el-input>
           </el-form-item>
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="dataInfo.email"></el-input>
-          </el-form-item>
-          <el-form-item label="手机号" prop="mobile">
+          <el-form-item label="归属" prop="attribution">
             <el-input v-model="dataInfo.mobile"></el-input>
           </el-form-item>
-          <el-form-item label="状态" v-if="itemTitle == '修改客户'">
+          <el-form-item label="状态" v-if="itemTitle == '修改号码'">
             <el-radio-group v-model="dataInfo.status" size="mini">
-              <el-radio label="正常"></el-radio>
-              <el-radio label="停用"></el-radio>
+              <el-radio label="专用"></el-radio>
+              <el-radio label="通用"></el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
@@ -38,7 +35,7 @@
   import {validateEmail, validateMobile} from "../../utils/validate"
 
   export default {
-    name: 'client',
+    name: 'number',
     components: {
       ListTemplate
     },
@@ -46,35 +43,20 @@
       return {
         loading: false,
         itemDisplay: false,
-        itemTitle: "新增客户",
-        searchPlace: "ID/名称/邮箱/手机号",
+        itemTitle: "新增号码",
+        searchPlace: "号码/归属",
         searchInput: "",
         formRules: {
-          userName: [
-            {required: true, message: '名称不能为空', trigger: 'blur'},
-          ],
-          email: [
-            {required: true, trigger: 'blur', validator:validateEmail},
-          ],
           mobile: [
             {required: true, trigger: 'blur', validator:validateMobile},
-          ]
+          ],
+          attribution: [
+            {required: true, message: '归属不能为空', trigger: 'blur'},
+          ],
         },
         tableHead: [
           {
-            label: 'ID',
-            prop: 'userId',
-          },
-          {
-            label: '名称',
-            prop: 'userName'
-          },
-          {
-            label: '邮箱',
-            prop: 'email'
-          },
-          {
-            label: '手机号',
+            label: '号码',
             prop: 'mobile'
           },
           {
@@ -82,16 +64,8 @@
             prop: 'status'
           },
           {
-            label: '余额',
-            prop: 'balance'
-          },
-          {
-            label: '透支额度',
-            prop: 'overdraftLimit'
-          },
-          {
-            label: '开户人',
-            prop: 'aoName'
+            label: '归属',
+            prop: 'attribution'
           },
           {
             label: '创建时间',
@@ -104,7 +78,7 @@
         ]
       }
     },
-    computed: mapGetters('client', {
+    computed: mapGetters('number', {
       pageNumOpts: "pageNumOpts",
       pageNumSelect: "pageNumSelect",
       pageNo: "pageNo",
