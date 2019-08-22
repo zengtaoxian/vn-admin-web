@@ -1,4 +1,4 @@
-import { addInfo, delInfo, mdfInfo, getInfo, resetInfo, getList } from '@/api/user'
+import { addInfo, delInfo, mdfInfo, getInfo, getList } from '@/api/number'
 
 //consts
 const PAGE_NUM_SELECT = 'PAGE_NUM_SELECT';
@@ -15,6 +15,7 @@ const state = {
   pageTotal: 10,
   dataList: [],
   dataInfo: {
+    id: '',
     mobile: '',
     status: '',
     attribution: '',
@@ -47,7 +48,7 @@ const actions = {
   //删除信息
   delInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
     let data = [
-      reqData.userId
+      reqData.id
     ];
     delInfo(data).then(response => {
       reslove(response);
@@ -68,7 +69,7 @@ const actions = {
   //获取信息
   getInfo: ({commit}, reqData) => new Promise((resolve, reject) => {
     let data = {
-      userId: reqData.userId,
+      id: reqData.id,
     };
     getInfo(data).then(response => {
       if (response.code === 0) {
@@ -102,21 +103,10 @@ const actions = {
     });
   }),
 
-  //重置信息
-  resetInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
-    let data = {
-      mobile: reqData.mobile,
-    };
-    resetInfo(data).then(response => {
-      reslove(response);
-    }).catch(err => {
-      reject(err);
-    });
-  }),
-
   //清空信息
   clearInfo: ({commit}) => new Promise((reslove, reject) => {
     let dataInfo = {
+      id: '',
       mobile: '',
       status: '',
       attribution: '',

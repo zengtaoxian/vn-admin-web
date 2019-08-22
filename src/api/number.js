@@ -32,14 +32,6 @@ export function getInfo(data) {
   })
 }
 
-export function resetInfo(data) {
-  return request({
-    url: '/number/reset',
-    method: 'post',
-    data: data
-  })
-}
-
 export function getList(data) {
   return request({
     url: 'number/list',

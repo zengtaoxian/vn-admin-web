@@ -3,16 +3,16 @@
     <list-template :searchPlace="searchPlace" :searchInput="searchInput" :dataList="dataList" :tableHead="tableHead"
                    :itemDisplay="itemDisplay" :itemTitle="itemTitle" :loading="loading" :dataInfo="dataInfo"
                    :pageTotal="pageTotal" :pageNo="pageNo" :pageNumOpts="pageNumOpts" :pageNumSelect="pageNumSelect"
-                   @closeDialog="closeDialog" :reset="true" @resetItem="resetItem"
+                   @closeDialog="closeDialog"
                    @createItem="createItem" @searchInputChange="searchInputChange" @modifyItem="modifyItem"
                    @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
       <template slot-scope="scope" slot="item">
         <el-form ref="itemForm" :model="dataInfo" :rules="formRules" :label-width="scope.itemLabelWidth">
           <el-form-item label="号码" prop="mobile">
-            <el-input v-model="dataInfo.userName"></el-input>
+            <el-input v-model="dataInfo.mobile"></el-input>
           </el-form-item>
           <el-form-item label="归属" prop="attribution">
-            <el-input v-model="dataInfo.mobile"></el-input>
+            <el-input v-model="dataInfo.attribution"></el-input>
           </el-form-item>
           <el-form-item label="状态" v-if="itemTitle == '修改号码'">
             <el-radio-group v-model="dataInfo.status" size="mini">
@@ -32,7 +32,7 @@
 <script>
   import {mapGetters} from "vuex"
   import ListTemplate from "../../components/ListTemplate"
-  import {validateEmail, validateMobile} from "../../utils/validate"
+  import {validateMobile} from "../../utils/validate"
 
   export default {
     name: 'number',
@@ -90,9 +90,7 @@
       addSearchInput(data) {
         if (this.searchInput) {
           data['like'] = {
-            userId: this.searchInput,
-            userName: this.searchInput,
-            email: this.searchInput,
+            attribution: this.searchInput,
             mobile: this.searchInput
           }
         }
@@ -128,7 +126,7 @@
 
       createItem() {
         this.$store.dispatch(this.$options.name + '/clearInfo').then(() => {
-          this.itemTitle = "新增客户"
+          this.itemTitle = "新增号码"
           this.itemDisplay = true
         })
       },
@@ -142,7 +140,7 @@
 
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (this.itemTitle === '修改客户') {
+            if (this.itemTitle === '修改号码') {
               this.$store.dispatch(this.$options.name + '/mdfInfo').then((response) => {
                 if (response.code === 0) {
                   this.$message({
@@ -180,13 +178,13 @@
 
       modifyItem(row) {
         this.$store.dispatch(this.$options.name + '/getInfo', row).then((response) => {
-          this.itemTitle = "修改客户"
+          this.itemTitle = "修改号码"
           this.itemDisplay = true
         })
       },
 
       deleteItem(row) {
-        this.$confirm('确定删除客户?', '提示', {
+        this.$confirm('确定删除号码?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -212,37 +210,6 @@
           this.$message({
             type: 'info',
             message: '取消删除!'
-          });
-        });
-      },
-
-      resetItem(row) {
-        this.$confirm('确定重置密码?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$store.dispatch(this.$options.name + '/resetInfo', row).then((response) => {
-            if (response.code === 0) {
-              this.$message({
-                type: 'success',
-                message: '重置成功!'
-              });
-
-              let data = {
-                page: this.pageNo,
-                limit: this.pageNumSelect,
-              }
-              this.addSearchInput(data)
-              this.$store.dispatch(this.$options.name + '/getList', data)
-            } else {
-              this.$Message.error(response.msg)
-            }
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消重置!'
           });
         });
       },
