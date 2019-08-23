@@ -59,7 +59,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'user',
         component: () => import('@/views/user/index'),
-        meta: { title: '用户管理', icon: 'user' }
+        meta: { title: '用户管理', icon: 'setting' }
       }
     ]
   },
@@ -72,7 +72,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'number',
         component: () => import('@/views/number/index'),
-        meta: { title: '号码管理', icon: 'user' }
+        meta: { title: '号码管理', icon: 'number' }
       }
     ]
   },
