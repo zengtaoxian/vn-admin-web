@@ -5,6 +5,7 @@ import login from './modules/login'
 import client from './modules/client'
 import user from './modules/user'
 import number from './modules/number'
+import rate from './modules/rate'
 
 Vue.use(Vuex)
 
@@ -14,7 +15,8 @@ const store = new Vuex.Store({
     login,
     client,
     user,
-    number
+    number,
+    rate
   }
 })
 

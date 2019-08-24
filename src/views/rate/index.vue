@@ -1,27 +1,21 @@
 <template>
   <div class="app-container">
     <list-t :searchPlace="searchPlace" :searchInput="searchInput" :dataList="dataList" :tableHead="tableHead"
-                   :itemDisplay="itemDisplay" :itemTitle="itemTitle" :loading="loading" :dataInfo="dataInfo"
-                   :pageTotal="pageTotal" :pageNo="pageNo" :pageNumOpts="pageNumOpts" :pageNumSelect="pageNumSelect"
-                   @closeDialog="closeDialog" :reset="true" @resetItem="resetItem"
-                   @createItem="createItem" @searchInputChange="searchInputChange" @modifyItem="modifyItem"
-                   @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
+            :itemDisplay="itemDisplay" :itemTitle="itemTitle" :loading="loading" :dataInfo="dataInfo"
+            :pageTotal="pageTotal" :pageNo="pageNo" :pageNumOpts="pageNumOpts" :pageNumSelect="pageNumSelect"
+            @closeDialog="closeDialog"
+            @createItem="createItem" @searchInputChange="searchInputChange" @modifyItem="modifyItem"
+            @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
       <template slot-scope="scope" slot="item">
         <el-form ref="itemForm" :model="dataInfo" :rules="formRules" :label-width="scope.itemLabelWidth">
-          <el-form-item label="名称" prop="userName">
-            <el-input v-model="dataInfo.userName"></el-input>
+          <el-form-item label="客户名称" prop="userName">
+            <el-input v-model="dataInfo.customerId"></el-input>
           </el-form-item>
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="dataInfo.email"></el-input>
+          <el-form-item label="费率(元)" prop="rate">
+            <el-input v-model="dataInfo.rate"></el-input>
           </el-form-item>
-          <el-form-item label="手机号" prop="mobile">
-            <el-input v-model="dataInfo.mobile"></el-input>
-          </el-form-item>
-          <el-form-item label="状态" v-if="itemTitle == '修改客户'">
-            <el-radio-group v-model="dataInfo.status" size="mini">
-              <el-radio label="正常"></el-radio>
-              <el-radio label="停用"></el-radio>
-            </el-radio-group>
+          <el-form-item label="周期(秒)" prop="cycle">
+            <el-input v-model="dataInfo.cycle"></el-input>
           </el-form-item>
         </el-form>
       </template>
@@ -34,11 +28,10 @@
 </template>
 <script>
   import {mapGetters} from "vuex"
-  import ListT from '@/components/ListT'
-  import {validateEmail, validateMobile} from "../../utils/validate"
+  import ListT from "../../components/ListT"
 
   export default {
-    name: 'client',
+    name: 'rate',
     components: {
       ListT
     },
@@ -46,52 +39,32 @@
       return {
         loading: false,
         itemDisplay: false,
-        itemTitle: "新增客户",
-        searchPlace: "ID/名称/邮箱/手机号",
+        itemTitle: "新增费率",
+        searchPlace: "客户名称",
         searchInput: "",
         formRules: {
           userName: [
             {required: true, message: '名称不能为空', trigger: 'blur'},
           ],
-          email: [
-            {required: true, trigger: 'blur', validator:validateEmail},
+          rate: [
+            {required: true, trigger: 'blur', type: 'number'},
           ],
-          mobile: [
-            {required: true, trigger: 'blur', validator:validateMobile},
+          cycle: [
+            {required: true, trigger: 'blur', type: 'number'},
           ]
         },
         tableHead: [
           {
-            label: 'ID',
-            prop: 'userId',
+            label: '客户名称',
+            prop: 'customerId'
           },
           {
-            label: '名称',
-            prop: 'userName'
+            label: '费率',
+            prop: 'rate'
           },
           {
-            label: '邮箱',
-            prop: 'email'
-          },
-          {
-            label: '手机号',
-            prop: 'mobile'
-          },
-          {
-            label: '状态',
-            prop: 'status'
-          },
-          {
-            label: '余额',
-            prop: 'balance'
-          },
-          {
-            label: '透支额度',
-            prop: 'overdraftLimit'
-          },
-          {
-            label: '开户人',
-            prop: 'aoName'
+            label: '周期',
+            prop: 'cycle'
           },
           {
             label: '创建时间',
@@ -104,7 +77,7 @@
         ]
       }
     },
-    computed: mapGetters('client', {
+    computed: mapGetters('rate', {
       pageNumOpts: "pageNumOpts",
       pageNumSelect: "pageNumSelect",
       pageNo: "pageNo",
@@ -116,10 +89,7 @@
       addSearchInput(data) {
         if (this.searchInput) {
           data['like'] = {
-            userId: this.searchInput,
-            userName: this.searchInput,
-            email: this.searchInput,
-            mobile: this.searchInput
+            customerId: this.searchInput,
           }
         }
       },
@@ -154,7 +124,7 @@
 
       createItem() {
         this.$store.dispatch(this.$options.name + '/clearInfo').then(() => {
-          this.itemTitle = "新增客户"
+          this.itemTitle = "新增费率"
           this.itemDisplay = true
         })
       },
@@ -168,7 +138,7 @@
 
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (this.itemTitle === '修改客户') {
+            if (this.itemTitle === '修改费率') {
               this.$store.dispatch(this.$options.name + '/mdfInfo').then((response) => {
                 if (response.code === 0) {
                   this.$message({
@@ -206,13 +176,13 @@
 
       modifyItem(row) {
         this.$store.dispatch(this.$options.name + '/getInfo', row).then((response) => {
-          this.itemTitle = "修改客户"
+          this.itemTitle = "修改费率"
           this.itemDisplay = true
         })
       },
 
       deleteItem(row) {
-        this.$confirm('确定删除客户?', '提示', {
+        this.$confirm('确定删除费率?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -238,37 +208,6 @@
           this.$message({
             type: 'info',
             message: '取消删除!'
-          });
-        });
-      },
-
-      resetItem(row) {
-        this.$confirm('确定重置密码?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$store.dispatch(this.$options.name + '/resetInfo', row).then((response) => {
-            if (response.code === 0) {
-              this.$message({
-                type: 'success',
-                message: '重置成功!'
-              });
-
-              let data = {
-                page: this.pageNo,
-                limit: this.pageNumSelect,
-              }
-              this.addSearchInput(data)
-              this.$store.dispatch(this.$options.name + '/getList', data)
-            } else {
-              this.$Message.error(response.msg)
-            }
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消重置!'
           });
         });
       },

@@ -33,9 +33,15 @@ export const constantRouterMap = [
   {
     path: '/',
     component: Layout,
-    redirect: '/client',
-    name: 'client',
-    hidden: true,
+    redirect: '/home',
+    children: [
+      {
+        path: 'home',
+        name: 'home',
+        component: () => import('@/views/home/index'),
+        meta: { title: '首页', icon: 'home' }
+      }
+    ]
   },
 
   {
@@ -52,19 +58,6 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/user',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'user',
-        component: () => import('@/views/user/index'),
-        meta: { title: '用户管理', icon: 'setting' }
-      }
-    ]
-  },
-
-  {
     path: '/number',
     component: Layout,
     children: [
@@ -73,6 +66,32 @@ export const constantRouterMap = [
         name: 'number',
         component: () => import('@/views/number/index'),
         meta: { title: '号码管理', icon: 'number' }
+      }
+    ]
+  },
+
+  {
+    path: '/rate',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'rate',
+        component: () => import('@/views/rate/index'),
+        meta: { title: '费率管理', icon: 'yuan' }
+      }
+    ]
+  },
+
+  {
+    path: '/system',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'system',
+        component: () => import('@/views/user/index'),
+        meta: { title: '系统管理', icon: 'setting' }
       }
     ]
   },

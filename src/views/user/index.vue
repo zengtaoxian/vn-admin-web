@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <list-template :searchPlace="searchPlace" :searchInput="searchInput" :dataList="dataList" :tableHead="tableHead"
+    <list-t :searchPlace="searchPlace" :searchInput="searchInput" :dataList="dataList" :tableHead="tableHead"
                    :itemDisplay="itemDisplay" :itemTitle="itemTitle" :loading="loading" :dataInfo="dataInfo"
                    :pageTotal="pageTotal" :pageNo="pageNo" :pageNumOpts="pageNumOpts" :pageNumSelect="pageNumSelect"
                    @closeDialog="closeDialog" :reset="true" @resetItem="resetItem"
@@ -29,18 +29,18 @@
         <el-button size="small" @click="formReset('itemForm')">取消</el-button>
         <el-button size="small" type="primary" @click="formSubmit('itemForm')">确定</el-button>
       </template>
-    </list-template>
+    </list-t>
   </div>
 </template>
 <script>
   import {mapGetters} from "vuex"
-  import ListTemplate from "../../components/ListTemplate"
+  import ListT from "../../components/ListT"
   import {validateEmail, validateMobile} from "../../utils/validate"
 
   export default {
     name: 'client',
     components: {
-      ListTemplate
+      ListT
     },
     data() {
       return {
