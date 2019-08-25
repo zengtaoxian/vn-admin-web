@@ -26,7 +26,7 @@ export function mdfInfo(data) {
 
 export function getInfo(data) {
   return request({
-    url: '/user/info',
+    url: 'user/info',
     method: 'post',
     data: data
   })
@@ -34,7 +34,7 @@ export function getInfo(data) {
 
 export function resetInfo(data) {
   return request({
-    url: '/user/password',
+    url: 'user/password',
     method: 'post',
     data: data
   })

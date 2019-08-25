@@ -6,6 +6,9 @@ import client from './modules/client'
 import user from './modules/user'
 import number from './modules/number'
 import rate from './modules/rate'
+import ring from './modules/ring'
+import finance from './modules/finance'
+import report from './modules/report'
 
 Vue.use(Vuex)
 
@@ -16,7 +19,10 @@ const store = new Vuex.Store({
     client,
     user,
     number,
-    rate
+    rate,
+    ring,
+    finance,
+    report
   }
 })
 

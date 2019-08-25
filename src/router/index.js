@@ -65,7 +65,20 @@ export const constantRouterMap = [
         path: 'index',
         name: 'number',
         component: () => import('@/views/number/index'),
-        meta: { title: '号码管理', icon: 'number' }
+        meta: { title: '号码管理', icon: 'phone' }
+      }
+    ]
+  },
+
+  {
+    path: '/ring',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'ring',
+        component: () => import('@/views/ring/index'),
+        meta: { title: '铃音管理', icon: 'customer-service' }
       }
     ]
   },
@@ -79,6 +92,32 @@ export const constantRouterMap = [
         name: 'rate',
         component: () => import('@/views/rate/index'),
         meta: { title: '费率管理', icon: 'yuan' }
+      }
+    ]
+  },
+
+  {
+    path: '/finance',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'finance',
+        component: () => import('@/views/finance/index'),
+        meta: { title: '财务管理', icon: 'account-book' }
+      }
+    ]
+  },
+
+  {
+    path: '/report',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'report',
+        component: () => import('@/views/report/index'),
+        meta: { title: '报表管理', icon: 'yuan' }
       }
     ]
   },

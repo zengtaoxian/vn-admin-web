@@ -26,7 +26,7 @@ export function mdfInfo(data) {
 
 export function getInfo(data) {
   return request({
-    url: '/rate/info',
+    url: 'rate/info',
     method: 'post',
     data: data
   })

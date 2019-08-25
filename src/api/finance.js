@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addInfo(data) {
   return request({
-    url: 'client/save',
+    url: 'finance/save',
     method: 'post',
     data: data
   })
@@ -10,7 +10,7 @@ export function addInfo(data) {
 
 export function delInfo(data) {
   return request({
-    url: 'client/delete',
+    url: 'finance/delete',
     method: 'post',
     data: data
   })
@@ -18,7 +18,7 @@ export function delInfo(data) {
 
 export function mdfInfo(data) {
   return request({
-    url: 'client/update',
+    url: 'finance/update',
     method: 'post',
     data: data
   })
@@ -26,15 +26,7 @@ export function mdfInfo(data) {
 
 export function getInfo(data) {
   return request({
-    url: 'client/info',
-    method: 'post',
-    data: data
-  })
-}
-
-export function resetInfo(data) {
-  return request({
-    url: 'client/resetpassword',
+    url: 'finance/info',
     method: 'post',
     data: data
   })
@@ -42,7 +34,7 @@ export function resetInfo(data) {
 
 export function getList(data) {
   return request({
-    url: 'client/list',
+    url: 'finance/list',
     method: 'post',
     data: data
   })
