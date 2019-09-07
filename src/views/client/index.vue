@@ -1,11 +1,12 @@
 <template>
   <div class="app-container">
     <list-t :searchPlace="searchPlace" :searchInput="searchInput" :dataList="dataList" :tableHead="tableHead"
-                   :itemDisplay="itemDisplay" :itemTitle="itemTitle" :loading="loading" :dataInfo="dataInfo"
-                   :pageTotal="pageTotal" :pageNo="pageNo" :pageNumOpts="pageNumOpts" :pageNumSelect="pageNumSelect"
-                   @closeDialog="closeDialog" :reset="true" @resetItem="resetItem"
-                   @createItem="createItem" @searchInputChange="searchInputChange" @modifyItem="modifyItem"
-                   @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
+            :itemDisplay="itemDisplay" :itemTitle="itemTitle" :loading="loading" :dataInfo="dataInfo"
+            :dataDict="dataDict"
+            :pageTotal="pageTotal" :pageNo="pageNo" :pageNumOpts="pageNumOpts" :pageNumSelect="pageNumSelect"
+            @closeDialog="closeDialog" :reset="true" @resetItem="resetItem"
+            @createItem="createItem" @searchInputChange="searchInputChange" @modifyItem="modifyItem"
+            @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
       <template slot-scope="scope" slot="item">
         <el-form ref="itemForm" :model="dataInfo" :rules="formRules" :label-width="scope.itemLabelWidth">
           <el-form-item label="名称" prop="userName">
@@ -19,8 +20,8 @@
           </el-form-item>
           <el-form-item label="状态" v-if="itemTitle == '修改客户'">
             <el-radio-group v-model="dataInfo.status" size="mini">
-              <el-radio label="正常"></el-radio>
-              <el-radio label="停用"></el-radio>
+              <el-radio :label="1">{{dataDict["status"]["1"]}}</el-radio>
+              <el-radio :label="0">{{dataDict["status"]["0"]}}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
@@ -54,11 +55,17 @@
             {required: true, message: '名称不能为空', trigger: 'blur'},
           ],
           email: [
-            {required: true, trigger: 'blur', validator:validateEmail},
+            {required: true, trigger: 'blur', validator: validateEmail},
           ],
           mobile: [
-            {required: true, trigger: 'blur', validator:validateMobile},
+            {required: true, trigger: 'blur', validator: validateMobile},
           ]
+        },
+        dataDict: {
+          "status": {
+            "0": "禁用",
+            "1": "正常"
+          }
         },
         tableHead: [
           {
@@ -174,7 +181,7 @@
                   this.$message({
                     type: 'success',
                     message: '修改成功!'
-                  });
+                  })
                   this.$store.dispatch(this.$options.name + '/getList', data)
                   this.itemDisplay = false
                 } else {
@@ -187,7 +194,7 @@
                   this.$message({
                     type: 'success',
                     message: '添加成功!'
-                  });
+                  })
                   this.$store.dispatch(this.$options.name + '/getList', data)
                   this.itemDisplay = false
                 } else {
@@ -222,7 +229,7 @@
               this.$message({
                 type: 'success',
                 message: '删除成功!'
-              });
+              })
 
               let data = {
                 page: this.pageNo,
@@ -238,8 +245,8 @@
           this.$message({
             type: 'info',
             message: '取消删除!'
-          });
-        });
+          })
+        })
       },
 
       resetItem(row) {
@@ -253,7 +260,7 @@
               this.$message({
                 type: 'success',
                 message: '重置成功!'
-              });
+              })
 
               let data = {
                 page: this.pageNo,
@@ -269,8 +276,8 @@
           this.$message({
             type: 'info',
             message: '取消重置!'
-          });
-        });
+          })
+        })
       },
 
       closeDialog() {
