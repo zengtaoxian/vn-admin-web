@@ -1,4 +1,5 @@
 import { addInfo, delInfo, mdfInfo, getInfo, getList } from '@/api/number'
+import {DEF_PAGE_NUM_OPTS, DEF_PAGE_NUM_SELECT, DEF_PAGE_NO} from '@/utils/constant'
 
 //consts
 const PAGE_NUM_SELECT = 'PAGE_NUM_SELECT';
@@ -9,16 +10,16 @@ const DATA_LIST = 'DATA_LIST';
 
 //states
 const state = {
-  pageNumOpts: [10, 20, 30, 40],
-  pageNumSelect: 10,
-  pageNo: 1,
-  pageTotal: 10,
+  pageNumOpts: DEF_PAGE_NUM_OPTS,
+  pageNumSelect: DEF_PAGE_NUM_SELECT,
+  pageNo: DEF_PAGE_NO,
+  pageTotal: 0,
   dataList: [],
   dataInfo: {
     id: '',
     mobile: '',
     status: '',
-    attribution: '',
+    consumerId: '',
     createTime: '',
     updateTime: ''
   }
@@ -92,8 +93,8 @@ const actions = {
   getList: ({commit}, reqData) => new Promise((reslove, reject) => {
     getList(reqData).then(response => {
       if (response.code === 0) {
-        commit(PAGE_NO, reqData.page)
-        commit(PAGE_NUM_SELECT, reqData.limit)
+        commit(PAGE_NO, 'page' in reqData ? reqData.page : DEF_PAGE_NO)
+        commit(PAGE_NUM_SELECT, 'limit' in reqData ? reqData.limit : DEF_PAGE_NUM_SELECT)
         commit(DATA_LIST, response.data.list)
         commit(PAGE_TOTAL, response.data.totalCount)
       }
@@ -109,7 +110,7 @@ const actions = {
       id: '',
       mobile: '',
       status: '',
-      attribution: '',
+      consumerId: '',
       createTime: '',
       updateTime: ''
     };

@@ -113,10 +113,10 @@
         this.$store.dispatch(this.$options.name + '/getList', data)
       },
 
-      pageSizeChange(page_size) {
+      pageSizeChange(pageSize) {
         let data = {
           page: this.pageNo,
-          limit: page_size,
+          limit: pageSize,
         }
         this.addSearchInput(data)
         this.$store.dispatch(this.$options.name + '/getList', data)

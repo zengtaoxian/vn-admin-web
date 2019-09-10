@@ -49,10 +49,7 @@
         formRules: {
           mobile: [
             {required: true, trigger: 'blur', validator:validateMobile},
-          ],
-          attribution: [
-            {required: true, message: '归属不能为空', trigger: 'blur'},
-          ],
+          ]
         },
         tableHead: [
           {
@@ -65,7 +62,7 @@
           },
           {
             label: '归属',
-            prop: 'attribution'
+            prop: 'consumerId'
           },
           {
             label: '创建时间',
@@ -78,14 +75,19 @@
         ]
       }
     },
-    computed: mapGetters('number', {
-      pageNumOpts: "pageNumOpts",
-      pageNumSelect: "pageNumSelect",
-      pageNo: "pageNo",
-      pageTotal: "pageTotal",
-      dataList: "dataList",
-      dataInfo: "dataInfo"
-    }),
+    computed: {
+      ...mapGetters('number', {
+        pageNumOpts: "pageNumOpts",
+        pageNumSelect: "pageNumSelect",
+        pageNo: "pageNo",
+        pageTotal: "pageTotal",
+        dataList: "dataList",
+        dataInfo: "dataInfo"
+      }),
+      ...mapGetters('client', {
+        clientList: "dataList"
+      })
+    },
     methods: {
       addSearchInput(data) {
         if (this.searchInput) {
@@ -115,10 +117,10 @@
         this.$store.dispatch(this.$options.name + '/getList', data)
       },
 
-      pageSizeChange(page_size) {
+      pageSizeChange(pageSize) {
         let data = {
           page: this.pageNo,
-          limit: page_size,
+          limit: pageSize,
         }
         this.addSearchInput(data)
         this.$store.dispatch(this.$options.name + '/getList', data)
@@ -216,7 +218,19 @@
 
       closeDialog() {
         this.itemDisplay = false
-      }
+      },
+
+      querySearch(queryString, cb) {
+        var restaurants = this.restaurants;
+        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+        // 调用 callback 返回建议列表的数据
+        cb(results);
+      },
+      createFilter(queryString) {
+        return (restaurant) => {
+          return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+        };
+      },
     },
 
     created() {
@@ -227,6 +241,7 @@
       this.addSearchInput(data)
       this.$store.dispatch(this.$options.name + '/getList', data)
       this.$store.dispatch(this.$options.name + '/clearInfo')
+      this.$store.dispatch('client/getList', {})
     }
   }
 </script>
