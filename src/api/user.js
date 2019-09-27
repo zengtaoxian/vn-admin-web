@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addInfo(data) {
   return request({
-    url: 'user/save',
+    url: 'admin/user',
     method: 'post',
     data: data
   })
@@ -26,8 +26,8 @@ export function mdfInfo(data) {
 
 export function getInfo(data) {
   return request({
-    url: 'user/info',
-    method: 'post',
+    url: 'admin/user',
+    method: 'get',
     data: data
   })
 }
@@ -42,8 +42,8 @@ export function resetInfo(data) {
 
 export function getList(data) {
   return request({
-    url: 'user/list',
-    method: 'post',
+    url: 'admin/user',
+    method: 'get',
     data: data
   })
 }

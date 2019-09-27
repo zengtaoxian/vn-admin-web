@@ -1,26 +1,26 @@
-import { login, logout, getInfo } from '@/api/login'
+import { login, logout } from '@/api/login'
 import Cookies from 'js-cookie'
 
-// consts
+//consts
 const LOGIN_TOKEN = 'LOGIN_TOKEN'
 const LOGIN_NAME = 'LOGIN_NAME'
-const LOGIN_ROLES = 'LOGIN_ROLES'
+const LOGIN_UID = 'LOGIN_UID'
 
-// states
+//states
 const state = {
   token: Cookies.get(LOGIN_TOKEN),
   name: '',
-  roles: []
+  uid: ''
 }
 
-// getters
+//getters
 const getters = {
   token: state => state.token,
   name: state => state.name,
-  roles: state => state.roles
+  uid: state => state.uid
 }
 
-// mutations
+//mutations
 const mutations = {
   LOGIN_TOKEN: (state, token) => {
     state.token = token
@@ -28,20 +28,22 @@ const mutations = {
   LOGIN_NAME: (state, name) => {
     state.name = name
   },
-  LOGIN_ROLES: (state, roles) => {
-    state.roles = roles
+  LOGIN_UID: (state, uid) => {
+    state.uid = uid
   }
 }
 
-// actions
+//actions
 const actions = {
-  // 登录
+  //登录
   Login({ commit }, userInfo) {
     return new Promise((resolve, reject) => {
       login(userInfo).then(response => {
         const data = response.data
-        Cookies.set(LOGIN_TOKEN, data.userId)
-        commit(LOGIN_TOKEN, data.userId)
+        Cookies.set(LOGIN_TOKEN, data.token)
+        commit(LOGIN_TOKEN, data.token)
+        commit(LOGIN_NAME, userInfo.name)
+        commit(LOGIN_UID, data.user.uid)
         resolve()
       }).catch(error => {
         reject(error)
@@ -49,31 +51,13 @@ const actions = {
     })
   },
 
-  // 获取用户信息
-  GetInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo({ userId: state.token }).then(response => {
-        const data = response.data
-        if (data.roleIdList && data.roleIdList.length > 0) {
-          // 验证返回的roleList是否是一个非空数组
-          commit(LOGIN_ROLES, data.roleIdList)
-        } else {
-          reject('getInfo: roleIdList must be a non-null array!')
-        }
-        commit(LOGIN_NAME, data.userName)
-        resolve(response)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // 登出
+  //登出
   LogOut({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         commit(LOGIN_TOKEN, '')
-        commit(LOGIN_ROLES, [])
+        commit(LOGIN_NAME, '')
+        commit(LOGIN_UID, '')
         Cookies.remove(LOGIN_TOKEN)
         resolve()
       }).catch(error => {
@@ -86,6 +70,7 @@ const actions = {
   FedLogOut({ commit }) {
     return new Promise(resolve => {
       commit(LOGIN_TOKEN, '')
+      commit(LOGIN_UID, '')
       Cookies.remove(LOGIN_TOKEN)
       resolve()
     })
