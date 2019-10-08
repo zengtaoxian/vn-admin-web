@@ -8,9 +8,9 @@ const LOGIN_UID = 'LOGIN_UID'
 
 //states
 const state = {
-  token: Cookies.get(LOGIN_TOKEN),
+  token: Cookies.get(LOGIN_TOKEN) || '',
   name: '',
-  uid: ''
+  uid: Cookies.get(LOGIN_UID) || ''
 }
 
 //getters
@@ -41,6 +41,7 @@ const actions = {
       login(userInfo).then(response => {
         const data = response.data
         Cookies.set(LOGIN_TOKEN, data.token)
+        Cookies.set(LOGIN_UID, data.user.uid)
         commit(LOGIN_TOKEN, data.token)
         commit(LOGIN_NAME, userInfo.name)
         commit(LOGIN_UID, data.user.uid)
@@ -59,6 +60,7 @@ const actions = {
         commit(LOGIN_NAME, '')
         commit(LOGIN_UID, '')
         Cookies.remove(LOGIN_TOKEN)
+        Cookies.remove(LOGIN_UID)
         resolve()
       }).catch(error => {
         reject(error)
@@ -72,6 +74,7 @@ const actions = {
       commit(LOGIN_TOKEN, '')
       commit(LOGIN_UID, '')
       Cookies.remove(LOGIN_TOKEN)
+      Cookies.remove(LOGIN_UID)
       resolve()
     })
   }

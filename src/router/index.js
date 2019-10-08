@@ -138,10 +138,6 @@ export const constantRouterMap = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-if (localStorage.getItem('TOKEN')) {
-  store.dispatch('login/load', localStorage.getItem('TOKEN'))
-}
-
 const router = new Router({
   mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
