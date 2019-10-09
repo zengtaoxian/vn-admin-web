@@ -83,9 +83,14 @@ export default {
             this.$router.push({ path: this.redirect || '/' })
           }).catch(() => {
             this.loading = false
+            this.$message({
+                message: '用户名或密码不正确!',
+                type: 'error',
+                duration: 2 * 1000
+            })
           })
         } else {
-          console.log('error submit!!')
+          this.$message('error submit!!')
           return false
         }
       })

@@ -9,7 +9,7 @@ const LOGIN_UID = 'LOGIN_UID'
 //states
 const state = {
   token: Cookies.get(LOGIN_TOKEN) || '',
-  name: '',
+  name: Cookies.get(LOGIN_NAME) || '',
   uid: Cookies.get(LOGIN_UID) || ''
 }
 
@@ -41,6 +41,7 @@ const actions = {
       login(userInfo).then(response => {
         const data = response.data
         Cookies.set(LOGIN_TOKEN, data.token)
+        Cookies.set(LOGIN_NAME, userInfo.name)
         Cookies.set(LOGIN_UID, data.user.uid)
         commit(LOGIN_TOKEN, data.token)
         commit(LOGIN_NAME, userInfo.name)

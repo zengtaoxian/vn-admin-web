@@ -16,12 +16,12 @@ const state = {
   pageTotal: 0,
   dataList: [],
   dataInfo: {
-    userId: '',
-    userName: '',
-    email: '',
+    cid: '',
+    name: '',
     mobile: '',
+    email: '',
     balance: '',
-    overdraftLimit: '',
+    overdraft: '',
     aoName: '',
     createTime: '',
     updateTime: ''

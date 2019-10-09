@@ -154,18 +154,7 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
-      if (store.state.user.uid.length === 0) {
-        store.dispatch('user/GetInfo', store.state.login.uid).then(res => { // 拉取用户信息
-          next()
-        }).catch((err) => {
-          store.dispatch('login/FedLogOut').then(() => {
-            Message.error(err || 'Verification failed, please login again')
-            next({ path: '/' })
-          })
-        })
-      } else {
-        next()
-      }
+      next()
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
