@@ -18,13 +18,14 @@ const state = {
   dataInfo: {
     uid: '',
     name: '',
-    mobile: '',
     email: '',
+    mobile: '',
+    status: '',
     balance: '',
     overdraft: '',
-    aoName: '',
-    createTime: '',
-    updateTime: ''
+    create_user: '',
+    create_time: '',
+    update_time: ''
   }
 };
 
@@ -52,7 +53,7 @@ const actions = {
   //删除信息
   delInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
     let data = [
-      reqData.userId
+      reqData.uid
     ];
     delInfo(data).then(response => {
       reslove(response);
@@ -73,17 +74,16 @@ const actions = {
   //获取信息
   getInfo: ({commit}, reqData) => new Promise((resolve, reject) => {
     let data = {
-      userId: reqData.userId,
+      uid: reqData.uid,
     };
     getInfo(data).then(response => {
-      if (response.code === 0) {
-        let respData = response.data;
-        if (response.code === 0) {
+      if (response.status === 200) {
+        let respData = {}
+        if (response.data.results.length > 0) {
+          respData = response.data.results[0]
           commit(DATA_INFO, JSON.parse(JSON.stringify(respData)));
-          resolve(respData);
-        } else {
-          reject(respData);
         }
+        resolve(respData);
       } else {
         reject(response);
       }
@@ -95,11 +95,11 @@ const actions = {
   //获取列表
   getList: ({commit}, reqData) => new Promise((reslove, reject) => {
     getList(reqData).then(response => {
-      if (response.code === 0) {
+      if (response.status === 200) {
         commit(PAGE_NO, 'page' in reqData ? reqData.page : DEF_PAGE_NO)
         commit(PAGE_NUM_SELECT, 'limit' in reqData ? reqData.limit : DEF_PAGE_NUM_SELECT)
-        commit(DATA_LIST, response.data.list)
-        commit(PAGE_TOTAL, response.data.totalCount)
+        commit(DATA_LIST, response.data.results)
+        commit(PAGE_TOTAL, response.data.count)
       }
       reslove(response);
     }).catch(err => {
@@ -110,7 +110,7 @@ const actions = {
   //重置信息
   resetInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
     let data = {
-      userId: reqData.userId,
+      uid: reqData.uid,
     };
     resetInfo(data).then(response => {
       reslove(response);
@@ -122,15 +122,16 @@ const actions = {
   //清空信息
   clearInfo: ({commit}) => new Promise((reslove, reject) => {
     let dataInfo = {
-      userId: '',
-      userName: '',
+      uid: '',
+      name: '',
       email: '',
       mobile: '',
+      status: '',
       balance: '',
-      overdraftLimit: '',
-      aoName: '',
-      createTime: '',
-      updateTime: ''
+      overdraft: '',
+      create_user: '',
+      create_time: '',
+      update_time: ''
     };
     commit(DATA_INFO, dataInfo);
     reslove();

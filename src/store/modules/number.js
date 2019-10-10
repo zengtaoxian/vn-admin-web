@@ -5,7 +5,6 @@ import {DEF_PAGE_NUM_OPTS, DEF_PAGE_NUM_SELECT, DEF_PAGE_NO} from '@/utils/const
 const PAGE_NUM_SELECT = 'PAGE_NUM_SELECT';
 const PAGE_NO = 'PAGE_NO';
 const PAGE_TOTAL = 'PAGE_TOTAL';
-const DATA_INFO = 'DATA_INFO';
 const DATA_LIST = 'DATA_LIST';
 
 //states
@@ -14,15 +13,7 @@ const state = {
   pageNumSelect: DEF_PAGE_NUM_SELECT,
   pageNo: DEF_PAGE_NO,
   pageTotal: 0,
-  dataList: [],
-  dataInfo: {
-    id: '',
-    mobile: '',
-    status: '',
-    consumerId: '',
-    createTime: '',
-    updateTime: ''
-  }
+  dataList: []
 };
 
 //getters
@@ -31,15 +22,14 @@ const getters = {
   pageNumSelect: state => state.pageNumSelect,
   pageNo: state => state.pageNo,
   pageTotal: state => state.pageTotal,
-  dataInfo: state => state.dataInfo,
   dataList: state => state.dataList
 };
 
 //actions
 const actions = {
   //添加信息
-  addInfo: ({commit}) => new Promise((reslove, reject) => {
-    addInfo(state.dataInfo).then(response => {
+  addInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
+    addInfo(reqData).then(response => {
       reslove(response);
     }).catch(err => {
       reject(err);
@@ -59,8 +49,8 @@ const actions = {
   }),
 
   //修改信息
-  mdfInfo: ({commit}) => new Promise((reslove, reject) => {
-    mdfInfo(state.dataInfo).then(response => {
+  mdfInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
+    mdfInfo(reqData).then(response => {
       reslove(response);
     }).catch(err => {
       reject(err);
@@ -76,7 +66,6 @@ const actions = {
       if (response.code === 0) {
         let respData = response.data;
         if (response.code === 0) {
-          commit(DATA_INFO, JSON.parse(JSON.stringify(respData)));
           resolve(respData);
         } else {
           reject(respData);
@@ -102,21 +91,7 @@ const actions = {
     }).catch(err => {
       reject(err);
     });
-  }),
-
-  //清空信息
-  clearInfo: ({commit}) => new Promise((reslove, reject) => {
-    let dataInfo = {
-      id: '',
-      mobile: '',
-      status: '',
-      consumerId: '',
-      createTime: '',
-      updateTime: ''
-    };
-    commit(DATA_INFO, dataInfo);
-    reslove();
-  }),
+  })
 };
 
 //mutations
@@ -131,10 +106,6 @@ const mutations = {
 
   [PAGE_TOTAL](state, data) {
     state.pageTotal = data;
-  },
-
-  [DATA_INFO](state, data) {
-    state.dataInfo = data;
   },
 
   [DATA_LIST](state, data) {

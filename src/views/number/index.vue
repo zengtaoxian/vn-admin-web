@@ -12,7 +12,7 @@
             <el-input v-model="dataInfo.mobile"></el-input>
           </el-form-item>
           <el-form-item label="归属" prop="attribution">
-            <el-input v-model="dataInfo.attribution"></el-input>
+            <el-autocomplete value-key="userName" v-model="clientValue" :fetch-suggestions="querySearch"></el-autocomplete>
           </el-form-item>
           <el-form-item label="状态" v-if="itemTitle == '修改号码'">
             <el-radio-group v-model="dataInfo.status" size="mini">
@@ -46,6 +46,8 @@
         itemTitle: "新增号码",
         searchPlace: "号码/归属",
         searchInput: "",
+        clientValue: "",
+        dataInfo: "",
         formRules: {
           mobile: [
             {required: true, trigger: 'blur', validator:validateMobile},
@@ -81,14 +83,23 @@
         pageNumSelect: "pageNumSelect",
         pageNo: "pageNo",
         pageTotal: "pageTotal",
-        dataList: "dataList",
-        dataInfo: "dataInfo"
+        dataList: "dataList"
       }),
       ...mapGetters('client', {
         clientList: "dataList"
       })
     },
     methods: {
+      clearInfo() {
+        this.dataInfo = {
+          id: '',
+          mobile: '',
+          status: '',
+          consumerId: '',
+          createTime: '',
+          updateTime: ''
+        };
+      },
       addSearchInput(data) {
         if (this.searchInput) {
           data['like'] = {
@@ -127,10 +138,9 @@
       },
 
       createItem() {
-        this.$store.dispatch(this.$options.name + '/clearInfo').then(() => {
-          this.itemTitle = "新增号码"
-          this.itemDisplay = true
-        })
+        this.clearInfo()
+        this.itemTitle = "新增号码"
+        this.itemDisplay = true
       },
 
       formSubmit(name) {
@@ -143,7 +153,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             if (this.itemTitle === '修改号码') {
-              this.$store.dispatch(this.$options.name + '/mdfInfo').then((response) => {
+              this.$store.dispatch(this.$options.name + '/mdfInfo', this.dataInfo).then((response) => {
                 if (response.code === 0) {
                   this.$message({
                     type: 'success',
@@ -156,7 +166,8 @@
                 }
               })
             } else {
-              this.$store.dispatch(this.$options.name + '/addInfo').then((response) => {
+              this.dataInfo["consumerId"] = this.getQueryItem(this.clientValue)[0].userId
+              this.$store.dispatch(this.$options.name + '/addInfo', this.dataInfo).then((response) => {
                 if (response.code === 0) {
                   this.$message({
                     type: 'success',
@@ -180,6 +191,7 @@
 
       modifyItem(row) {
         this.$store.dispatch(this.$options.name + '/getInfo', row).then((response) => {
+          this.dataInfo = response
           this.itemTitle = "修改号码"
           this.itemDisplay = true
         })
@@ -220,15 +232,18 @@
         this.itemDisplay = false
       },
 
-      querySearch(queryString, cb) {
-        var restaurants = this.restaurants;
-        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-        // 调用 callback 返回建议列表的数据
+      querySearch(query, cb) {
+        var results = query ? this.clientList.filter(this.createFilter(query)) : this.clientList;
         cb(results);
       },
-      createFilter(queryString) {
-        return (restaurant) => {
-          return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+
+      getQueryItem(query) {
+        return query ? this.clientList.filter(this.createFilter(query)) : "";
+      },
+
+      createFilter(query) {
+        return (item) => {
+          return (item.userName.toLowerCase().indexOf(query.toLowerCase()) === 0);
         };
       },
     },
@@ -239,8 +254,8 @@
         limit: this.pageNumSelect
       }
       this.addSearchInput(data)
+      this.clearInfo()
       this.$store.dispatch(this.$options.name + '/getList', data)
-      this.$store.dispatch(this.$options.name + '/clearInfo')
       this.$store.dispatch('client/getList', {})
     }
   }

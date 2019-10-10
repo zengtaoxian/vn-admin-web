@@ -9,8 +9,8 @@
             @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
       <template slot-scope="scope" slot="item">
         <el-form ref="itemForm" :model="dataInfo" :rules="formRules" :label-width="scope.itemLabelWidth">
-          <el-form-item label="名称" prop="userName">
-            <el-input v-model="dataInfo.userName"></el-input>
+          <el-form-item label="名称" prop="name">
+            <el-input v-model="dataInfo.name"></el-input>
           </el-form-item>
           <el-form-item label="邮箱" prop="email">
             <el-input v-model="dataInfo.email"></el-input>
@@ -50,8 +50,9 @@
         itemTitle: "新增客户",
         searchPlace: "ID/名称/邮箱/手机号",
         searchInput: "",
+        dataInfo: "",
         formRules: {
-          userName: [
+          name: [
             {required: true, message: '名称不能为空', trigger: 'blur'},
           ],
           email: [
@@ -64,17 +65,17 @@
         dataDict: {
           "status": {
             "0": "禁用",
-            "1": "正常"
+            "1": "启用"
           }
         },
         tableHead: [
           {
-            label: 'ID',
-            prop: 'userId',
+            label: 'UID',
+            prop: 'uid',
           },
           {
             label: '名称',
-            prop: 'userName'
+            prop: 'name'
           },
           {
             label: '邮箱',
@@ -94,19 +95,19 @@
           },
           {
             label: '透支额度',
-            prop: 'overdraftLimit'
+            prop: 'overdraft'
           },
           {
             label: '开户人',
-            prop: 'aoName'
+            prop: 'create_user'
           },
           {
             label: '创建时间',
-            prop: 'createTime'
+            prop: 'create_time'
           },
           {
             label: '更新时间',
-            prop: 'updateTime'
+            prop: 'update_time'
           },
         ]
       }
@@ -116,18 +117,26 @@
       pageNumSelect: "pageNumSelect",
       pageNo: "pageNo",
       pageTotal: "pageTotal",
-      dataList: "dataList",
-      dataInfo: "dataInfo"
+      dataList: "dataList"
     }),
     methods: {
+      clearInfo() {
+        this.dataInfo = {
+          uid: '',
+          name: '',
+          email: '',
+          mobile: '',
+          balance: '',
+          overdraft: '',
+          create_user: '',
+          create_time: '',
+          update_time: ''
+        };
+      },
+
       addSearchInput(data) {
         if (this.searchInput) {
-          data['like'] = {
-            userId: this.searchInput,
-            userName: this.searchInput,
-            email: this.searchInput,
-            mobile: this.searchInput
-          }
+          data['search'] =  this.searchInput
         }
       },
 
@@ -160,10 +169,9 @@
       },
 
       createItem() {
-        this.$store.dispatch(this.$options.name + '/clearInfo').then(() => {
-          this.itemTitle = "新增客户"
-          this.itemDisplay = true
-        })
+        this.clearInfo()
+        this.itemTitle = "新增客户"
+        this.itemDisplay = true
       },
 
       formSubmit(name) {
@@ -176,7 +184,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             if (this.itemTitle === '修改客户') {
-              this.$store.dispatch(this.$options.name + '/mdfInfo').then((response) => {
+              this.$store.dispatch(this.$options.name + '/mdfInfo',this.dataInfo).then((response) => {
                 if (response.code === 0) {
                   this.$message({
                     type: 'success',
@@ -189,7 +197,7 @@
                 }
               })
             } else {
-              this.$store.dispatch(this.$options.name + '/addInfo').then((response) => {
+              this.$store.dispatch(this.$options.name + '/addInfo', this.dataInfo).then((response) => {
                 if (response.code === 0) {
                   this.$message({
                     type: 'success',
@@ -213,6 +221,7 @@
 
       modifyItem(row) {
         this.$store.dispatch(this.$options.name + '/getInfo', row).then((response) => {
+          this.dataInfo = response
           this.itemTitle = "修改客户"
           this.itemDisplay = true
         })
@@ -291,8 +300,8 @@
         limit: this.pageNumSelect
       }
       this.addSearchInput(data)
+      this.clearInfo()
       this.$store.dispatch(this.$options.name + '/getList', data)
-      this.$store.dispatch(this.$options.name + '/clearInfo')
     }
   }
 </script>
