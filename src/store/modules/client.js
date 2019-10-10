@@ -16,7 +16,7 @@ const state = {
   pageTotal: 0,
   dataList: [],
   dataInfo: {
-    cid: '',
+    uid: '',
     name: '',
     mobile: '',
     email: '',
