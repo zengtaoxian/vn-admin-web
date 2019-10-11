@@ -33,7 +33,7 @@ export function getInfo(reqKey) {
 export function resetInfo(reqKey, reqData) {
   return request({
     url: 'client/' + reqKey,
-    method: 'update',
+    method: 'put',
     data: reqData
   })
 }

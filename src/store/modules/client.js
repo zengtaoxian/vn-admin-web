@@ -83,6 +83,7 @@ const actions = {
   //重置信息
   resetInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
     let reqKey = reqData.uid;
+    reqData['password'] = '12345678';
     resetInfo(reqKey, reqData).then(response => {
       reslove(response);
     }).catch(err => {
