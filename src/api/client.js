@@ -1,49 +1,47 @@
 import request from '@/utils/request'
 
-export function addInfo(data) {
+export function addInfo(reqData) {
   return request({
     url: 'client',
     method: 'post',
-    data: data
+    data: reqData
   })
 }
 
-export function delInfo(data) {
+export function delInfo(reqKey) {
   return request({
-    url: 'client',
-    method: 'delete',
-    data: data
+    url: 'client/' + reqKey,
+    method: 'delete'
   })
 }
 
-export function mdfInfo(data) {
+export function mdfInfo(reqKey, reqData) {
   return request({
-    url: 'client',
+    url: 'client/' + reqKey,
+    method: 'put',
+    data: reqData
+  })
+}
+
+export function getInfo(reqKey) {
+  return request({
+    url: 'client/' + reqKey,
+    method: 'get'
+  })
+}
+
+export function resetInfo(reqKey, reqData) {
+  return request({
+    url: 'client/' + reqKey,
     method: 'update',
-    data: data
+    data: reqData
   })
 }
 
-export function getInfo(data) {
+export function getList(reqData) {
   return request({
     url: 'client',
     method: 'get',
-    params: data
-  })
-}
-
-export function resetInfo(data) {
-  return request({
-    url: 'client',
-    method: 'update',
-    data: data
-  })
-}
-
-export function getList(data) {
-  return request({
-    url: 'client',
-    method: 'get',
-    data: data
+    params: reqData
   })
 }
