@@ -32,8 +32,8 @@ export function getInfo(reqKey) {
 
 export function resetInfo(reqKey, reqData) {
   return request({
-    url: 'client/' + reqKey,
-    method: 'put',
+    url: 'client/reset/' + reqKey,
+    method: 'patch',
     data: reqData
   })
 }
