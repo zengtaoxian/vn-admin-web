@@ -2,12 +2,21 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
              label-position="left">
-      <h3 class="title">系统登陆</h3>
+      <div class="title-container">
+        <h3 class="title">系统登陆</h3>
+      </div>
       <el-form-item prop="name">
         <span class="svg-container">
           <svg-icon icon-class="user"/>
         </span>
-        <el-input v-model="loginForm.name" name="username" type="text" auto-complete="on" placeholder="username"/>
+        <el-input
+          ref="username"
+          v-model="loginForm.name"
+          placeholder="username"
+          name="username"
+          type="text"
+          tabindex="1"
+          auto-complete="on"/>
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
@@ -15,8 +24,10 @@
         </span>
         <el-input
           :type="pwdType"
+          ref="password"
           v-model="loginForm.password"
           name="password"
+          tabindex="2"
           auto-complete="on"
           placeholder="password"
           @keyup.enter.native="handleLogin"/>
@@ -25,7 +36,7 @@
         </span>
       </el-form-item>
       <el-form-item>
-        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
+        <el-button :loading="loading" type="primary" style="width:100%" @click.native.prevent="handleLogin">
           登录
         </el-button>
       </el-form-item>
@@ -78,6 +89,9 @@
                 } else {
                     this.pwdType = 'password'
                 }
+                this.$nextTick(() => {
+                    this.$refs.password.focus()
+                })
             },
             handleLogin() {
                 this.$refs.loginForm.validate(valid => {
@@ -104,9 +118,18 @@
     }
 </script>
 
-<style rel="stylesheet/scss" lang="scss">
-  $bg: #2d3a4b;
-  $light_gray: #eee;
+<style lang="scss">
+  /* 修复input 背景不协调 和光标变色 */
+  /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+  $bg: #283443;
+  $light_gray: #fff;
+  $cursor: #fff;
+
+  @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+    .login-container .el-input input {
+      color: $cursor;
+    }
+  }
 
   /* reset element-ui css */
   .login-container {
@@ -123,10 +146,11 @@
         padding: 12px 5px 12px 15px;
         color: $light_gray;
         height: 47px;
+        caret-color: $cursor;
 
         &:-webkit-autofill {
-          -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
-          -webkit-text-fill-color: #fff !important;
+          box-shadow: 0 0 0px 1000px $bg inset !important;
+          -webkit-text-fill-color: $cursor !important;
         }
       }
     }
@@ -138,27 +162,26 @@
       color: #454545;
     }
   }
-
 </style>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   $bg: #2d3a4b;
   $dark_gray: #889aa4;
   $light_gray: #eee;
+
   .login-container {
-    position: fixed;
-    height: 100%;
+    min-height: 100%;
     width: 100%;
     background-color: $bg;
+    overflow: hidden;
 
     .login-form {
-      position: absolute;
-      left: 0;
-      right: 0;
+      position: relative;
       width: 520px;
       max-width: 100%;
-      padding: 35px 35px 15px 35px;
-      margin: 120px auto;
+      padding: 160px 35px 0;
+      margin: 0 auto;
+      overflow: hidden;
     }
 
     .tips {
@@ -181,13 +204,16 @@
       display: inline-block;
     }
 
-    .title {
-      font-size: 26px;
-      font-weight: 400;
-      color: $light_gray;
-      margin: 0px auto 40px auto;
-      text-align: center;
-      font-weight: bold;
+    .title-container {
+      position: relative;
+
+      .title {
+        font-size: 26px;
+        color: $light_gray;
+        margin: 0px auto 40px auto;
+        text-align: center;
+        font-weight: bold;
+      }
     }
 
     .show-pwd {
