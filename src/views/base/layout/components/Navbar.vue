@@ -4,7 +4,7 @@
     <breadcrumb />
     <el-dropdown class="avatar-container" trigger="click">
       <span class="el-dropdown-link">
-         {{ name }} <i class="el-icon-caret-bottom"></i>
+         {{ username }} <i class="el-icon-caret-bottom"></i>
       </span>
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
         <router-link class="inlineBlock" to="/">
@@ -33,7 +33,7 @@ export default {
   computed: {
     ...mapGetters({
       sidebar: 'sidebar/sidebar',
-      name: 'login/name'
+      username: 'login/username'
     })
   },
   methods: {

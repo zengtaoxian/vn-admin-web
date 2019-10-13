@@ -3,20 +3,20 @@ import Cookies from 'js-cookie'
 
 //consts
 const LOGIN_TOKEN = 'LOGIN_TOKEN';
-const LOGIN_NAME = 'LOGIN_NAME';
+const LOGIN_USERNAME = 'LOGIN_USERNAME';
 const LOGIN_UID = 'LOGIN_UID';
 
 //states
 const state = {
   token: Cookies.get(LOGIN_TOKEN) || '',
-  name: Cookies.get(LOGIN_NAME) || '',
+  username: Cookies.get(LOGIN_USERNAME) || '',
   uid: Cookies.get(LOGIN_UID) || ''
 };
 
 //getters
 const getters = {
   token: state => state.token,
-  name: state => state.name,
+  username: state => state.username,
   uid: state => state.uid
 };
 
@@ -25,8 +25,8 @@ const mutations = {
   LOGIN_TOKEN: (state, token) => {
     state.token = token
   },
-  LOGIN_NAME: (state, name) => {
-    state.name = name
+  LOGIN_USERNAME: (state, username) => {
+    state.username = username
   },
   LOGIN_UID: (state, uid) => {
     state.uid = uid
@@ -41,10 +41,10 @@ const actions = {
       login(userInfo).then(response => {
         const data = response.data;
         Cookies.set(LOGIN_TOKEN, data.token);
-        Cookies.set(LOGIN_NAME, userInfo.name);
+        Cookies.set(LOGIN_USERNAME, userInfo.username);
         Cookies.set(LOGIN_UID, data.user.uid);
         commit(LOGIN_TOKEN, data.token);
-        commit(LOGIN_NAME, userInfo.name);
+        commit(LOGIN_USERNAME, userInfo.username);
         commit(LOGIN_UID, data.user.uid);
         resolve()
       }).catch(error => {
@@ -60,7 +60,7 @@ const actions = {
         commit(LOGIN_TOKEN, '');
         commit(LOGIN_UID, '');
         Cookies.remove(LOGIN_TOKEN);
-        Cookies.remove(LOGIN_NAME);
+        Cookies.remove(LOGIN_USERNAME);
         Cookies.remove(LOGIN_UID);
         resolve()
       }).catch(error => {
@@ -75,7 +75,7 @@ const actions = {
       commit(LOGIN_TOKEN, '');
       commit(LOGIN_UID, '');
       Cookies.remove(LOGIN_TOKEN);
-      Cookies.remove(LOGIN_NAME);
+      Cookies.remove(LOGIN_USERNAME);
       Cookies.remove(LOGIN_UID);
       resolve()
     })

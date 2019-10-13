@@ -5,13 +5,13 @@
       <div class="title-container">
         <h3 class="title">系统登陆</h3>
       </div>
-      <el-form-item prop="name">
+      <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user"/>
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.name"
+          v-model="loginForm.username"
           placeholder="username"
           name="username"
           type="text"
@@ -59,11 +59,11 @@
             };
             return {
                 loginForm: {
-                    name: this.name,
+                    username: this.username,
                     password: ''
                 },
                 loginRules: {
-                    name: [{required: true, trigger: 'blur'}],
+                    username: [{required: true, trigger: 'blur'}],
                     password: [{required: true, trigger: 'blur', validator: validatePass}]
                 },
                 loading: false,
@@ -72,7 +72,7 @@
             }
         },
         computed: mapGetters('login', {
-            name: "name"
+            username: "username"
         }),
         watch: {
             $route: {

@@ -9,8 +9,8 @@
             @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
       <template slot-scope="scope" slot="item">
         <el-form ref="itemForm" :model="dataInfo" :rules="formRules" :label-width="scope.itemLabelWidth">
-          <el-form-item label="名称" prop="name">
-            <el-input v-model="dataInfo.name"></el-input>
+          <el-form-item label="名称" prop="username">
+            <el-input v-model="dataInfo.username"></el-input>
           </el-form-item>
           <el-form-item label="邮箱" prop="email">
             <el-input v-model="dataInfo.email"></el-input>
@@ -52,7 +52,7 @@
                 searchInput: "",
                 dataInfo: "",
                 formRules: {
-                    name: [
+                    username: [
                         {required: true, message: '名称不能为空', trigger: 'blur'},
                     ],
                     email: [
@@ -75,7 +75,7 @@
                     },
                     {
                         label: '名称',
-                        prop: 'name'
+                        prop: 'username'
                     },
                     {
                         label: '邮箱',
@@ -123,7 +123,7 @@
             clearInfo() {
                 this.dataInfo = {
                     uid: '',
-                    name: '',
+                    username: '',
                     email: '',
                     mobile: '',
                     balance: '',
