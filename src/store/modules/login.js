@@ -58,6 +58,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         commit(LOGIN_TOKEN, '');
+        commit(LOGIN_USERNAME, '');
         commit(LOGIN_UID, '');
         Cookies.remove(LOGIN_TOKEN);
         Cookies.remove(LOGIN_USERNAME);
@@ -73,6 +74,7 @@ const actions = {
   FedLogOut({commit}) {
     return new Promise(resolve => {
       commit(LOGIN_TOKEN, '');
+      commit(LOGIN_USERNAME, '');
       commit(LOGIN_UID, '');
       Cookies.remove(LOGIN_TOKEN);
       Cookies.remove(LOGIN_USERNAME);

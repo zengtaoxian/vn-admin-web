@@ -34,8 +34,8 @@ export function getInfo(data) {
 
 export function resetInfo(data) {
   return request({
-    url: 'user/password',
-    method: 'post',
+    url: 'reset/password',
+    method: 'get',
     data: data
   })
 }

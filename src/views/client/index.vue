@@ -48,7 +48,7 @@
                 loading: false,
                 itemDisplay: false,
                 itemTitle: "新增客户",
-                searchPlace: "ID/名称/邮箱/手机号",
+                searchPlace: "UID/名称/邮箱/手机号",
                 searchInput: "",
                 dataInfo: "",
                 formRules: {
@@ -112,13 +112,18 @@
                 ]
             }
         },
-        computed: mapGetters('client', {
-            pageNumOpts: "pageNumOpts",
-            pageNumSelect: "pageNumSelect",
-            pageNo: "pageNo",
-            pageTotal: "pageTotal",
-            dataList: "dataList"
-        }),
+        computed: {
+            ...mapGetters('client', {
+                pageNumOpts: "pageNumOpts",
+                pageNumSelect: "pageNumSelect",
+                pageNo: "pageNo",
+                pageTotal: "pageTotal",
+                dataList: "dataList"
+            }),
+            ...mapGetters('login', {
+                loginUid: "uid"
+            })
+        },
         methods: {
             clearInfo() {
                 this.dataInfo = {
@@ -199,6 +204,7 @@
                                 })
                             })
                         } else {
+                            this.dataInfo['create_user'] = this.loginUid;
                             this.$store.dispatch(this.$options.name + '/addInfo', this.dataInfo).then((response) => {
                                 this.$message({
                                     type: 'success',
@@ -297,7 +303,7 @@
             };
             this.addSearchInput(data);
             this.clearInfo();
-            this.$store.dispatch(this.$options.name + '/getList', data)
+            this.$store.dispatch(this.$options.name + '/getList', data);
         }
     }
 </script>
