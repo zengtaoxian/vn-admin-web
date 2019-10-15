@@ -3,12 +3,13 @@ import Vuex from 'vuex'
 import sidebar from './modules/sidebar'
 import login from './modules/login'
 import client from './modules/client'
-import user from './modules/user'
+import user from './modules/system/user'
 import number from './modules/number'
 import rate from './modules/rate'
 import ring from './modules/ring'
 import finance from './modules/finance'
 import report from './modules/report'
+import service_type from "./modules/system/service_type"
 
 Vue.use(Vuex)
 
@@ -22,7 +23,8 @@ const store = new Vuex.Store({
     rate,
     ring,
     finance,
-    report
+    report,
+    service_type,
   }
 })
 

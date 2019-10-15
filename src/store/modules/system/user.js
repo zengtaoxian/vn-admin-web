@@ -1,4 +1,4 @@
-import {addInfo, delInfo, mdfInfo, getInfo, resetInfo, getList} from '@/api/user'
+import {addInfo, delInfo, mdfInfo, getInfo, resetInfo, getList} from '@/api/system/user'
 import {DEF_PAGE_NUM_OPTS, DEF_PAGE_NUM_SELECT, DEF_PAGE_NO} from '@/utils/constant'
 
 //consts
