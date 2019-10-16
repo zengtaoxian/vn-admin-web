@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-var api_name = 'service_type';
+var api_name = 'role';
 
 export function addInfo(reqData) {
   return request({

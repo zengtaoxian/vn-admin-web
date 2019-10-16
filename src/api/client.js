@@ -1,8 +1,10 @@
 import request from '@/utils/request'
 
+var api_name = 'client';
+
 export function addInfo(reqData) {
   return request({
-    url: 'client',
+    url: api_name,
     method: 'post',
     data: reqData
   })
@@ -10,14 +12,14 @@ export function addInfo(reqData) {
 
 export function delInfo(reqKey) {
   return request({
-    url: 'client/' + reqKey,
+    url: api_name + '/' + reqKey,
     method: 'delete'
   })
 }
 
 export function mdfInfo(reqKey, reqData) {
   return request({
-    url: 'client/' + reqKey,
+    url: api_name + '/' + reqKey,
     method: 'put',
     data: reqData
   })
@@ -25,23 +27,23 @@ export function mdfInfo(reqKey, reqData) {
 
 export function getInfo(reqKey) {
   return request({
-    url: 'client/' + reqKey,
+    url: api_name + '/' + reqKey,
     method: 'get'
-  })
-}
-
-export function resetInfo(reqKey, reqData) {
-  return request({
-    url: 'reset/password/' + reqKey,
-    method: 'get',
-    data: reqData
   })
 }
 
 export function getList(reqData) {
   return request({
-    url: 'client',
+    url: api_name,
     method: 'get',
     params: reqData
+  })
+}
+
+export function resetInfo(data) {
+  return request({
+    url: 'reset/password',
+    method: 'get',
+    data: data
   })
 }
