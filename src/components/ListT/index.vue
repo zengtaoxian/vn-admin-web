@@ -25,7 +25,7 @@
         v-for="col in tableHead"
         :prop="col.prop" :label="col.label" :key="col.prop">
         <template slot-scope="scope">
-          <div v-if="col.prop in dataDict">
+          <div v-if="dataDict && col.prop in dataDict">
             {{dataDict[col.prop][scope.row[col.prop]]}}
           </div>
           <div v-else>
