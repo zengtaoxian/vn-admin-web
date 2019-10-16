@@ -17,6 +17,14 @@
           <el-form-item label="图标" prop="path">
             <el-input v-model="dataInfo.icon"></el-input>
           </el-form-item>
+          <el-select v-model="dataInfo.parent" clearable placeholder="请选择">
+            <el-option
+              v-for="menuItem in dataList"
+              :key="menuItem.id"
+              :label="menuItem.title"
+              :value="menuItem.id">
+            </el-option>
+          </el-select>
         </el-form>
       </template>
       <template slot="button">
@@ -90,7 +98,10 @@
     methods: {
       clearInfo() {
         this.dataInfo = {
-          name: '',
+          title: '',
+          path: '',
+          icon: '',
+          parent: '',
           create_time: '',
           update_time: ''
         };
