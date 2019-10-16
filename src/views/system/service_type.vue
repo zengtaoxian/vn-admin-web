@@ -21,200 +21,202 @@
   </div>
 </template>
 <script>
-    import {mapGetters} from "vuex"
-    import ListT from '@/components/ListT'
+  import {mapGetters} from "vuex"
+  import ListT from '@/components/ListT'
 
-    export default {
-        name: 'service_type',
-        components: {
-            ListT
+  let moduleName = 'service_type'
+  let moduleTitle = "类型"
+  export default {
+    name: moduleName,
+    components: {
+      ListT
+    },
+    data() {
+      return {
+        loading: false,
+        itemDisplay: false,
+        itemTitle: "新增“" + moduleTitle,
+        searchPlace: "名称",
+        searchInput: "",
+        dataInfo: "",
+        formRules: {
+          name: [
+            {required: true, message: '名称不能为空', trigger: 'blur'},
+          ]
         },
-        data() {
-            return {
-                loading: false,
-                itemDisplay: false,
-                itemTitle: "新增类型",
-                searchPlace: "名称",
-                searchInput: "",
-                dataInfo: "",
-                formRules: {
-                    name: [
-                        {required: true, message: '名称不能为空', trigger: 'blur'},
-                    ]
-                },
-                tableHead: [
-                     {
-                        label: '名称',
-                        prop: 'name'
-                    },
-                    {
-                        label: '创建时间',
-                        prop: 'create_time'
-                    },
-                    {
-                        label: '更新时间',
-                        prop: 'update_time'
-                    },
-                ]
-            }
-        },
-        computed: {
-            ...mapGetters('service_type', {
-                pageNumOpts: "pageNumOpts",
-                pageNumSelect: "pageNumSelect",
-                pageNo: "pageNo",
-                pageTotal: "pageTotal",
-                dataList: "dataList"
-            })
-        },
-        methods: {
-            clearInfo() {
-                this.dataInfo = {
-                    name: '',
-                    create_time: '',
-                    update_time: ''
-                };
-            },
+        tableHead: [
+          {
+            label: '名称',
+            prop: 'name'
+          },
+          {
+            label: '创建时间',
+            prop: 'create_time'
+          },
+          {
+            label: '更新时间',
+            prop: 'update_time'
+          },
+        ]
+      }
+    },
+    computed: {
+      ...mapGetters(moduleName, {
+        pageNumOpts: "pageNumOpts",
+        pageNumSelect: "pageNumSelect",
+        pageNo: "pageNo",
+        pageTotal: "pageTotal",
+        dataList: "dataList"
+      })
+    },
+    methods: {
+      clearInfo() {
+        this.dataInfo = {
+          name: '',
+          create_time: '',
+          update_time: ''
+        };
+      },
 
-            addSearchInput(data) {
-                if (this.searchInput) {
-                    data['search'] = this.searchInput
-                }
-            },
+      addSearchInput(data) {
+        if (this.searchInput) {
+          data['search'] = this.searchInput
+        }
+      },
 
-            searchInputChange(searchInput) {
-                this.searchInput = searchInput;
-                let data = {
-                    page: 1,
-                    limit: this.pageNumSelect,
-                };
-                this.addSearchInput(data);
-                this.$store.dispatch(this.$options.name + '/getList', data)
-            },
+      searchInputChange(searchInput) {
+        this.searchInput = searchInput;
+        let data = {
+          page: 1,
+          limit: this.pageNumSelect,
+        };
+        this.addSearchInput(data);
+        this.$store.dispatch(this.$options.name + '/getList', data)
+      },
 
-            pageChange(page) {
-                let data = {
-                    page: page,
-                    limit: this.pageNumSelect,
-                };
-                this.addSearchInput(data);
-                this.$store.dispatch(this.$options.name + '/getList', data)
-            },
+      pageChange(page) {
+        let data = {
+          page: page,
+          limit: this.pageNumSelect,
+        };
+        this.addSearchInput(data);
+        this.$store.dispatch(this.$options.name + '/getList', data)
+      },
 
-            pageSizeChange(pageSize) {
-                let data = {
-                    page: this.pageNo,
-                    limit: pageSize,
-                };
-                this.addSearchInput(data);
-                this.$store.dispatch(this.$options.name + '/getList', data)
-            },
+      pageSizeChange(pageSize) {
+        let data = {
+          page: this.pageNo,
+          limit: pageSize,
+        };
+        this.addSearchInput(data);
+        this.$store.dispatch(this.$options.name + '/getList', data)
+      },
 
-            createItem() {
-                this.clearInfo();
-                this.itemTitle = "新增类型";
-                this.itemDisplay = true
-            },
+      createItem() {
+        this.clearInfo();
+        this.itemTitle = "新增" + moduleTitle;
+        this.itemDisplay = true
+      },
 
-            formSubmit(name) {
-                let data = {
-                    page: this.pageNo,
-                    limit: this.pageNumSelect,
-                };
-                this.addSearchInput(data);
+      formSubmit(name) {
+        let data = {
+          page: this.pageNo,
+          limit: this.pageNumSelect,
+        };
+        this.addSearchInput(data);
 
-                this.$refs[name].validate((valid) => {
-                    if (valid) {
-                        if (this.itemTitle === '修改类型') {
-                            this.$store.dispatch(this.$options.name + '/mdfInfo', this.dataInfo).then((response) => {
-                                this.$message({
-                                    type: 'success',
-                                    message: '修改成功!'
-                                });
-                                this.$store.dispatch(this.$options.name + '/getList', data);
-                                this.itemDisplay = false
-                            }).catch((error) => {
-                                this.$message({
-                                    type: 'error',
-                                    message: error.data,
-                                    duration: 2 * 1000
-                                })
-                            })
-                        } else {
-                            this.$store.dispatch(this.$options.name + '/addInfo', this.dataInfo).then((response) => {
-                                this.$message({
-                                    type: 'success',
-                                    message: '添加成功!'
-                                });
-                                this.$store.dispatch(this.$options.name + '/getList', data);
-                                this.itemDisplay = false
-                            }).catch((error) => {
-                                this.$message({
-                                    type: 'error',
-                                    message: error.data,
-                                    duration: 2 * 1000
-                                })
-                            })
-                        }
-                    }
-                })
-            },
-
-            formReset(name) {
-                this.$refs[name].clearValidate();
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            if (this.itemTitle === '修改' + moduleTitle) {
+              this.$store.dispatch(this.$options.name + '/mdfInfo', this.dataInfo).then((response) => {
+                this.$message({
+                  type: 'success',
+                  message: '修改成功!'
+                });
+                this.$store.dispatch(this.$options.name + '/getList', data);
                 this.itemDisplay = false
-            },
-
-            modifyItem(row) {
-                this.$store.dispatch(this.$options.name + '/getInfo', row).then((response) => {
-                    this.dataInfo = response;
-                    this.itemTitle = "修改类型";
-                    this.itemDisplay = true
+              }).catch((error) => {
+                this.$message({
+                  type: 'error',
+                  message: error.data,
+                  duration: 2 * 1000
                 })
-            },
-
-            deleteItem(row) {
-                this.$confirm('确定删除类型?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$store.dispatch(this.$options.name + '/delInfo', row).then((response) => {
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-
-                        let data = {
-                            page: this.pageNo,
-                            limit: this.pageNumSelect,
-                        };
-                        this.addSearchInput(data);
-                        this.$store.dispatch(this.$options.name + '/getList', data)
-                    })
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '取消删除!'
-                    })
-                })
-            },
-
-            closeDialog() {
+              })
+            } else {
+              this.$store.dispatch(this.$options.name + '/addInfo', this.dataInfo).then((response) => {
+                this.$message({
+                  type: 'success',
+                  message: '添加成功!'
+                });
+                this.$store.dispatch(this.$options.name + '/getList', data);
                 this.itemDisplay = false
+              }).catch((error) => {
+                this.$message({
+                  type: 'error',
+                  message: error.data,
+                  duration: 2 * 1000
+                })
+              })
             }
-        },
+          }
+        })
+      },
 
-        created() {
+      formReset(name) {
+        this.$refs[name].clearValidate();
+        this.itemDisplay = false
+      },
+
+      modifyItem(row) {
+        this.$store.dispatch(this.$options.name + '/getInfo', row).then((response) => {
+          this.dataInfo = response;
+          this.itemTitle = "修改" + moduleTitle;
+          this.itemDisplay = true
+        })
+      },
+
+      deleteItem(row) {
+        this.$confirm('确定删除' + moduleTitle + '?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch(this.$options.name + '/delInfo', row).then((response) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+
             let data = {
-                page: this.pageNo,
-                limit: this.pageNumSelect
+              page: this.pageNo,
+              limit: this.pageNumSelect,
             };
             this.addSearchInput(data);
-            this.clearInfo();
-            this.$store.dispatch(this.$options.name + '/getList', data);
-        }
+            this.$store.dispatch(this.$options.name + '/getList', data)
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消删除!'
+          })
+        })
+      },
+
+      closeDialog() {
+        this.itemDisplay = false
+      }
+    },
+
+    created() {
+      let data = {
+        page: this.pageNo,
+        limit: this.pageNumSelect
+      };
+      this.addSearchInput(data);
+      this.clearInfo();
+      this.$store.dispatch(this.$options.name + '/getList', data);
     }
+  }
 </script>
 
 <style lang="scss">

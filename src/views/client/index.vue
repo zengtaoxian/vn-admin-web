@@ -18,7 +18,7 @@
           <el-form-item label="手机号" prop="mobile">
             <el-input v-model="dataInfo.mobile"></el-input>
           </el-form-item>
-          <el-form-item label="状态" v-if="itemTitle === '修改客户'">
+          <el-form-item label="状态" v-if="itemTitle.slice(0,2) === '修改'">
             <el-radio-group v-model="dataInfo.status" size="mini">
               <el-radio :label="1">{{dataDict["status"]["1"]}}</el-radio>
               <el-radio :label="0">{{dataDict["status"]["0"]}}</el-radio>
@@ -38,8 +38,10 @@
     import ListT from '@/components/ListT'
     import {validateEmail, validateMobile} from "../../utils/validate"
 
+    let moduleName = 'client'
+    let moduleTitle = "客户"
     export default {
-        name: 'client',
+        name: moduleName,
         components: {
             ListT
         },
@@ -47,7 +49,7 @@
             return {
                 loading: false,
                 itemDisplay: false,
-                itemTitle: "新增客户",
+                itemTitle: "新增" + moduleTitle,
                 searchPlace: "UID/名称/邮箱/手机号",
                 searchInput: "",
                 dataInfo: "",
@@ -113,7 +115,7 @@
             }
         },
         computed: {
-            ...mapGetters('client', {
+            ...mapGetters(moduleName, {
                 pageNumOpts: "pageNumOpts",
                 pageNumSelect: "pageNumSelect",
                 pageNo: "pageNo",
@@ -175,7 +177,7 @@
 
             createItem() {
                 this.clearInfo();
-                this.itemTitle = "新增客户";
+                this.itemTitle = "新增" + moduleTitle;
                 this.itemDisplay = true
             },
 
@@ -188,7 +190,7 @@
 
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        if (this.itemTitle === '修改客户') {
+                        if (this.itemTitle === '修改' + moduleTitle) {
                             this.$store.dispatch(this.$options.name + '/mdfInfo', this.dataInfo).then((response) => {
                                 this.$message({
                                     type: 'success',
@@ -232,13 +234,13 @@
             modifyItem(row) {
                 this.$store.dispatch(this.$options.name + '/getInfo', row).then((response) => {
                     this.dataInfo = response;
-                    this.itemTitle = "修改客户";
+                    this.itemTitle = "修改" + moduleTitle;
                     this.itemDisplay = true
                 })
             },
 
             deleteItem(row) {
-                this.$confirm('确定删除客户?', '提示', {
+                this.$confirm('确定删除' + moduleTitle + '?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'

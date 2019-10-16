@@ -2,11 +2,10 @@ import {addInfo, delInfo, mdfInfo, getInfo, resetInfo, getList} from '@/api/syst
 import {DEF_PAGE_NUM_OPTS, DEF_PAGE_NUM_SELECT, DEF_PAGE_NO} from '@/utils/constant'
 
 //consts
-const PAGE_NUM_SELECT = 'PAGE_NUM_SELECT';
-const PAGE_NO = 'PAGE_NO';
-const PAGE_TOTAL = 'PAGE_TOTAL';
-const DATA_INFO = 'DATA_INFO';
-const DATA_LIST = 'DATA_LIST';
+const PAGE_NUM_SELECT = 'PAGE_NUM_SELECT'
+const PAGE_NO = 'PAGE_NO'
+const PAGE_TOTAL = 'PAGE_TOTAL'
+const DATA_LIST = 'DATA_LIST'
 
 //states
 const state = {
@@ -14,19 +13,8 @@ const state = {
   pageNumSelect: DEF_PAGE_NUM_SELECT,
   pageNo: DEF_PAGE_NO,
   pageTotal: 0,
-  dataList: [],
-  dataInfo: {
-    userId: '',
-    userName: '',
-    email: '',
-    mobile: '',
-    balance: '',
-    overdraftLimit: '',
-    aoName: '',
-    createTime: '',
-    updateTime: ''
-  }
-};
+  dataList: []
+}
 
 //getters
 const getters = {
@@ -34,131 +22,93 @@ const getters = {
   pageNumSelect: state => state.pageNumSelect,
   pageNo: state => state.pageNo,
   pageTotal: state => state.pageTotal,
-  dataInfo: state => state.dataInfo,
   dataList: state => state.dataList
-};
+}
 
 //actions
 const actions = {
   //添加信息
-  addInfo: ({commit}) => new Promise((reslove, reject) => {
-    addInfo(state.dataInfo).then(response => {
-      reslove(response);
+  addInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
+    addInfo(reqData).then(response => {
+      reslove(response)
     }).catch(err => {
-      reject(err);
-    });
+      reject(err)
+    })
   }),
 
   //删除信息
   delInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
-    let data = [
-      reqData.userId
-    ];
-    delInfo(data).then(response => {
-      reslove(response);
+    let reqKey = reqData.uid
+    delInfo(reqKey).then(response => {
+      reslove(response)
     }).catch(err => {
-      reject(err);
-    });
+      reject(err)
+    })
   }),
 
   //修改信息
-  mdfInfo: ({commit}) => new Promise((reslove, reject) => {
-    mdfInfo(state.dataInfo).then(response => {
-      reslove(response);
+  mdfInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
+    let reqKey = reqData.uid
+    mdfInfo(reqKey, reqData).then(response => {
+      reslove(response)
     }).catch(err => {
-      reject(err);
-    });
+      reject(err)
+    })
   }),
 
   //获取信息
   getInfo: ({commit}, reqData) => new Promise((resolve, reject) => {
-    let data = {
-      userId: reqData.userId,
-    };
-    getInfo(data).then(response => {
-      if (response.code === 0) {
-        let respData = response.data;
-        if (response.code === 0) {
-          commit(DATA_INFO, JSON.parse(JSON.stringify(respData)));
-          resolve(respData);
-        } else {
-          reject(respData);
-        }
-      } else {
-        reject(response);
-      }
+    let reqKey = reqData.uid
+    getInfo(reqKey).then(response => {
+      let respData = response.data
+      resolve(respData)
     }).catch(err => {
-      reject(err);
-    });
+      reject(err)
+    })
   }),
 
   //获取列表
   getList: ({commit}, reqData) => new Promise((reslove, reject) => {
     getList(reqData).then(response => {
-      if (response.code === 0) {
-        commit(PAGE_NO, 'page' in reqData ? reqData.page : DEF_PAGE_NO)
-        commit(PAGE_NUM_SELECT, 'limit' in reqData ? reqData.limit : DEF_PAGE_NUM_SELECT)
-        commit(DATA_LIST, response.data.list)
-        commit(PAGE_TOTAL, response.data.totalCount)
-      }
-      reslove(response);
+      commit(PAGE_NO, 'page' in reqData ? reqData.page : DEF_PAGE_NO)
+      commit(PAGE_NUM_SELECT, 'limit' in reqData ? reqData.limit : DEF_PAGE_NUM_SELECT)
+      commit(DATA_LIST, response.data.results)
+      commit(PAGE_TOTAL, response.data.count)
+      reslove(response)
     }).catch(err => {
-      reject(err);
-    });
+      reject(err)
+    })
   }),
 
   //重置信息
   resetInfo: ({commit}, reqData) => new Promise((reslove, reject) => {
-    let data = {
-      userId: reqData.userId,
-    };
-    resetInfo(data).then(response => {
-      reslove(response);
+    let reqKey = reqData.uid
+    resetInfo(reqKey).then(response => {
+      reslove(response)
     }).catch(err => {
-      reject(err);
-    });
+      reject(err)
+    })
   }),
-
-  //清空信息
-  clearInfo: ({commit}) => new Promise((reslove, reject) => {
-    let dataInfo = {
-      userId: '',
-      userName: '',
-      email: '',
-      mobile: '',
-      balance: '',
-      overdraftLimit: '',
-      aoName: '',
-      createTime: '',
-      updateTime: ''
-    };
-    commit(DATA_INFO, dataInfo);
-    reslove();
-  }),
-};
+}
 
 //mutations
 const mutations = {
   [PAGE_NUM_SELECT](state, data) {
-    state.pageNumSelect = data;
+    state.pageNumSelect = data
   },
 
   [PAGE_NO](state, data) {
-    state.pageNo = data;
+    state.pageNo = data
   },
 
   [PAGE_TOTAL](state, data) {
-    state.pageTotal = data;
-  },
-
-  [DATA_INFO](state, data) {
-    state.dataInfo = data;
+    state.pageTotal = data
   },
 
   [DATA_LIST](state, data) {
-    state.dataList = data;
+    state.dataList = data
   }
-};
+}
 
 export default {
   namespaced: true,
@@ -166,4 +116,4 @@ export default {
   getters,
   actions,
   mutations
-};
+}

@@ -1,4 +1,4 @@
-import {addInfo, delInfo, mdfInfo, getInfo, getList} from '@/api/system/role_type'
+import {addInfo, delInfo, mdfInfo, getInfo, getList} from '@/api/system/role'
 import {DEF_PAGE_NUM_OPTS, DEF_PAGE_NUM_SELECT, DEF_PAGE_NO} from '@/utils/constant'
 
 //consts

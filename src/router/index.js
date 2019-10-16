@@ -37,7 +37,6 @@ export const constantRouterMap = [
     children: [
       {
         path: 'home',
-        name: 'home',
         component: () => import('@/views/home/index/'),
         meta: {title: '首页', icon: 'home'}
       }
@@ -50,7 +49,6 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'client',
         component: () => import('@/views/client/index/'),
         meta: {title: '客户管理', icon: 'user'}
       }
@@ -63,7 +61,6 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'number',
         component: () => import('@/views/number/index/'),
         meta: {title: '号码管理', icon: 'phone'}
       }
@@ -76,7 +73,6 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'ring',
         component: () => import('@/views/ring/index/'),
         meta: {title: '铃音管理', icon: 'customer-service'}
       }
@@ -89,7 +85,6 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'rate',
         component: () => import('@/views/rate/index/'),
         meta: {title: '费率管理', icon: 'yuan'}
       }
@@ -102,7 +97,6 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'finance',
         component: () => import('@/views/finance/index/'),
         meta: {title: '财务管理', icon: 'account-book'}
       }
@@ -115,7 +109,6 @@ export const constantRouterMap = [
     children: [
       {
         path: 'index',
-        name: 'report',
         component: () => import('@/views/report/index/'),
         meta: {title: '报表管理', icon: 'yuan'}
       }
@@ -125,32 +118,27 @@ export const constantRouterMap = [
   {
     path: '/system',
     component: Layout,
-    name: 'system',
     meta: {title: '系统管理', icon: 'setting'},
     children: [
       {
         path: 'user',
-        name: 'user',
         component: () => import('@/views/system/user/'),
-        meta: {title: '用户管理', icon: 'setting'}
+        meta: {title: '用户管理'}
       },
       {
         path: 'role',
-        name: 'role',
-        component: () => import('@/views/system/user/'),
-        meta: {title: '角色管理', icon: 'setting'}
+        component: () => import('@/views/system/role/'),
+        meta: {title: '角色管理'}
       },
       {
         path: 'menu',
-        name: 'menu',
-        component: () => import('@/views/system/user/'),
-        meta: {title: '菜单管理', icon: 'setting'}
+        component: () => import('@/views/system/menu/'),
+        meta: {title: '菜单管理'}
       },
       {
         path: 'service_type',
-        name: 'service_type',
         component: () => import('@/views/system/service_type/'),
-        meta: {title: '类型管理', icon: 'setting'}
+        meta: {title: '类型管理'}
       },
     ]
   },

@@ -10,6 +10,8 @@ import ring from './modules/ring'
 import finance from './modules/finance'
 import report from './modules/report'
 import service_type from "./modules/system/service_type"
+import role from "./modules/system/role"
+import menu from "./modules/system/menu"
 
 Vue.use(Vuex)
 
@@ -25,6 +27,8 @@ const store = new Vuex.Store({
     finance,
     report,
     service_type,
+    role,
+    menu
   }
 })
 

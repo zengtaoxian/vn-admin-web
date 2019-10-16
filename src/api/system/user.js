@@ -1,49 +1,48 @@
 import request from '@/utils/request'
 
-export function addInfo(data) {
+var api_name = 'user';
+
+export function addInfo(reqData) {
   return request({
-    url: 'admin/user',
+    url: api_name,
     method: 'post',
-    data: data
+    data: reqData
   })
 }
 
-export function delInfo(data) {
+export function delInfo(reqKey) {
   return request({
-    url: 'user/delete',
-    method: 'post',
-    data: data
+    url: api_name + '/' + reqKey,
+    method: 'delete'
   })
 }
 
-export function mdfInfo(data) {
+export function mdfInfo(reqKey, reqData) {
   return request({
-    url: 'user/update',
-    method: 'post',
-    data: data
+    url: api_name + '/' + reqKey,
+    method: 'put',
+    data: reqData
   })
 }
 
-export function getInfo(data) {
+export function getInfo(reqKey) {
   return request({
-    url: 'admin/user',
+    url: api_name + '/' + reqKey,
+    method: 'get'
+  })
+}
+
+export function getList(reqData) {
+  return request({
+    url: api_name,
     method: 'get',
-    data: data
+    params: reqData
   })
 }
 
-export function resetInfo(data) {
+export function resetInfo(reqKey) {
   return request({
-    url: 'reset/password',
-    method: 'get',
-    data: data
-  })
-}
-
-export function getList(data) {
-  return request({
-    url: 'admin/user',
-    method: 'get',
-    data: data
+    url: 'reset/password'  + '/' + reqKey,
+    method: 'get'
   })
 }

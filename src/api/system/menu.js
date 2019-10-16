@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-var api_name = 'client';
+var api_name = 'menu';
 
 export function addInfo(reqData) {
   return request({
@@ -37,12 +37,5 @@ export function getList(reqData) {
     url: api_name,
     method: 'get',
     params: reqData
-  })
-}
-
-export function resetInfo(reqKey) {
-  return request({
-    url: 'reset/password'  + '/' + reqKey,
-    method: 'get'
   })
 }

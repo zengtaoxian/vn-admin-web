@@ -24,8 +24,10 @@
     import {mapGetters} from "vuex"
     import ListT from '@/components/ListT'
 
+    let moduleName = 'role'
+    let moduleTitle = "角色"
     export default {
-        name: 'role',
+        name: moduleName,
         components: {
             ListT
         },
@@ -33,7 +35,7 @@
             return {
                 loading: false,
                 itemDisplay: false,
-                itemTitle: "新增角色",
+                itemTitle: "新增“" + moduleTitle,
                 searchPlace: "名称",
                 searchInput: "",
                 dataInfo: "",
@@ -59,7 +61,7 @@
             }
         },
         computed: {
-            ...mapGetters('service_type', {
+            ...mapGetters(moduleName, {
                 pageNumOpts: "pageNumOpts",
                 pageNumSelect: "pageNumSelect",
                 pageNo: "pageNo",
@@ -112,7 +114,7 @@
 
             createItem() {
                 this.clearInfo();
-                this.itemTitle = "新增角色";
+                this.itemTitle = "新增" + moduleTitle;
                 this.itemDisplay = true
             },
 
@@ -125,7 +127,7 @@
 
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        if (this.itemTitle === '修改角色') {
+                        if (this.itemTitle === '修改' + moduleTitle) {
                             this.$store.dispatch(this.$options.name + '/mdfInfo', this.dataInfo).then((response) => {
                                 this.$message({
                                     type: 'success',
@@ -168,13 +170,13 @@
             modifyItem(row) {
                 this.$store.dispatch(this.$options.name + '/getInfo', row).then((response) => {
                     this.dataInfo = response;
-                    this.itemTitle = "修改角色";
+                    this.itemTitle = "修改" + moduleTitle;
                     this.itemDisplay = true
                 })
             },
 
             deleteItem(row) {
-                this.$confirm('确定删除类型?', '提示', {
+                this.$confirm('确定删除' + moduleTitle + '?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'

@@ -2,27 +2,20 @@
   <div class="app-container">
     <list-t :searchPlace="searchPlace" :searchInput="searchInput" :dataList="dataList" :tableHead="tableHead"
             :itemDisplay="itemDisplay" :itemTitle="itemTitle" :loading="loading" :dataInfo="dataInfo"
-            :dataDict="dataDict"
             :pageTotal="pageTotal" :pageNo="pageNo" :pageNumOpts="pageNumOpts" :pageNumSelect="pageNumSelect"
-            @closeDialog="closeDialog" :reset="true" @resetItem="resetItem"
+            @closeDialog="closeDialog"
             @createItem="createItem" @searchInputChange="searchInputChange" @modifyItem="modifyItem"
             @deleteItem="deleteItem" @pageSizeChange="pageSizeChange" @pageChange="pageChange">
       <template slot-scope="scope" slot="item">
         <el-form ref="itemForm" :model="dataInfo" :rules="formRules" :label-width="scope.itemLabelWidth">
-          <el-form-item label="名称" prop="username">
-            <el-input v-model="dataInfo.username"></el-input>
+          <el-form-item label="标题" prop="title">
+            <el-input v-model="dataInfo.title"></el-input>
           </el-form-item>
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="dataInfo.email"></el-input>
+          <el-form-item label="路径" prop="path">
+            <el-input v-model="dataInfo.path"></el-input>
           </el-form-item>
-          <el-form-item label="手机号" prop="mobile">
-            <el-input v-model="dataInfo.mobile"></el-input>
-          </el-form-item>
-          <el-form-item label="状态" v-if="itemTitle.slice(0,2) === '修改'">
-            <el-radio-group v-model="dataInfo.status" size="mini">
-              <el-radio :label="1">{{dataDict["status"]["1"]}}</el-radio>
-              <el-radio :label="0">{{dataDict["status"]["0"]}}</el-radio>
-            </el-radio-group>
+          <el-form-item label="图标" prop="path">
+            <el-input v-model="dataInfo.icon"></el-input>
           </el-form-item>
         </el-form>
       </template>
@@ -36,10 +29,9 @@
 <script>
   import {mapGetters} from "vuex"
   import ListT from '@/components/ListT'
-  import {validateEmail, validateMobile} from "../../utils/validate"
 
-  let moduleName = 'user'
-  let moduleTitle = "用户"
+  let moduleName = 'menu'
+  let moduleTitle = "菜单"
   export default {
     name: moduleName,
     components: {
@@ -49,51 +41,31 @@
       return {
         loading: false,
         itemDisplay: false,
-        itemTitle: "新增" + moduleTitle,
-        searchPlace: "UID/名称/邮箱/手机号",
+        itemTitle: "新增“" + moduleTitle,
+        searchPlace: "标题",
         searchInput: "",
         dataInfo: "",
         formRules: {
-          username: [
+          name: [
             {required: true, message: '名称不能为空', trigger: 'blur'},
-          ],
-          email: [
-            {required: true, trigger: 'blur', validator: validateEmail},
-          ],
-          mobile: [
-            {required: true, trigger: 'blur', validator: validateMobile},
           ]
-        },
-        dataDict: {
-          "status": {
-            "0": "禁用",
-            "1": "启用"
-          }
         },
         tableHead: [
           {
-            label: 'UID',
-            prop: 'uid',
+            label: '标题',
+            prop: 'title'
           },
           {
-            label: '名称',
-            prop: 'username'
+            label: '路径',
+            prop: 'path'
           },
           {
-            label: '邮箱',
-            prop: 'email'
+            label: '图标',
+            prop: 'icon'
           },
           {
-            label: '手机号',
-            prop: 'mobile'
-          },
-          {
-            label: '状态',
-            prop: 'status'
-          },
-          {
-            label: '开户人',
-            prop: 'create_user'
+            label: '父菜单',
+            prop: 'parent'
           },
           {
             label: '创建时间',
@@ -113,21 +85,12 @@
         pageNo: "pageNo",
         pageTotal: "pageTotal",
         dataList: "dataList"
-      }),
-      ...mapGetters('login', {
-        loginUid: "uid"
       })
     },
     methods: {
       clearInfo() {
         this.dataInfo = {
-          uid: '',
-          username: '',
-          email: '',
-          mobile: '',
-          balance: '',
-          overdraft: '',
-          create_user: '',
+          name: '',
           create_time: '',
           update_time: ''
         };
@@ -198,7 +161,6 @@
                 })
               })
             } else {
-              this.dataInfo['create_user'] = this.loginUid;
               this.$store.dispatch(this.$options.name + '/addInfo', this.dataInfo).then((response) => {
                 this.$message({
                   type: 'success',
@@ -254,33 +216,6 @@
           this.$message({
             type: 'info',
             message: '取消删除!'
-          })
-        })
-      },
-
-      resetItem(row) {
-        this.$confirm('确定重置密码?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$store.dispatch(this.$options.name + '/resetInfo', row).then((response) => {
-            this.$message({
-              type: 'success',
-              message: '重置成功!'
-            });
-
-            let data = {
-              page: this.pageNo,
-              limit: this.pageNumSelect,
-            };
-            this.addSearchInput(data);
-            this.$store.dispatch(this.$options.name + '/getList', data)
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消重置!'
           })
         })
       },
