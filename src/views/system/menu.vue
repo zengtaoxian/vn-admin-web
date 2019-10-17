@@ -14,17 +14,19 @@
           <el-form-item label="路径" prop="path">
             <el-input v-model="dataInfo.path"></el-input>
           </el-form-item>
-          <el-form-item label="图标" prop="path">
+          <el-form-item label="图标" prop="icon">
             <el-input v-model="dataInfo.icon"></el-input>
           </el-form-item>
-          <el-select v-model="dataInfo.parent" clearable placeholder="请选择">
-            <el-option
-              v-for="menuItem in dataList"
-              :key="menuItem.id"
-              :label="menuItem.title"
-              :value="menuItem.id">
-            </el-option>
-          </el-select>
+          <el-form-item label="父菜单" prop="menu">
+            <el-select v-model="dataInfo.parent" clearable placeholder="请选择" style="width: 100%">
+              <el-option
+                v-for="menuItem in dataList"
+                :key="menuItem.id"
+                :label="menuItem.title"
+                :value="menuItem.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-form>
       </template>
       <template slot="button">
